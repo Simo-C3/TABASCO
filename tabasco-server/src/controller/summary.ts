@@ -1,3 +1,4 @@
+import type { Context } from 'hono';
 import type { SummaryRepositoryInterface } from '../domain/interface/summary';
 import { SummaryService } from '../service/summary';
 
@@ -17,7 +18,7 @@ export class SummaryController {
 		this.service = new SummaryService(repositoryInterface);
 	}
 
-	async summary(data: SummaryRequest): Promise<SummaryResponse> {
-		return await this.service.summary(data);
+	async summary(c: Context, data: SummaryRequest): Promise<SummaryResponse> {
+		return await this.service.summary(c, data);
 	}
 }
