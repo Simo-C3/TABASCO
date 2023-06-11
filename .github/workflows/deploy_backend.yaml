@@ -4,6 +4,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
   repository_dispatch:
 jobs:
   deploy:
@@ -13,7 +15,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Publish Worker
-        uses: cloudflare/wrangler-action@1.2.0
+        uses: cloudflare/wrangler-action@2.0.0
         with:
           workingDirectory: tabasco-server
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
