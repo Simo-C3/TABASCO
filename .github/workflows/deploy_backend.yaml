@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-  repository_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,4 +16,4 @@ jobs:
           workingDirectory: tabasco-server
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         env:
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
