@@ -2,5 +2,10 @@
 	"printWidth": 140,
 	"singleQuote": true,
 	"semi": true,
-	"useTabs": true
+	"useTabs": true,
+	"importOrder": [
+		"<THIRD_PARTY_MODULES>",
+		"^@?\\w",
+		"^[./]"
+	  ]
 }

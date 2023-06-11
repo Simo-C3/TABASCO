@@ -1,3 +1,5 @@
+import type { Context } from 'hono';
+
 export interface Summary {
 	title: string;
 	text: string;
@@ -8,5 +10,5 @@ export interface SummaryResult {
 }
 
 export interface SummaryRepositoryInterface {
-	summary(data: Summary): Promise<SummaryResult>;
+	summary(c: Context, data: Summary): Promise<SummaryResult>;
 }
