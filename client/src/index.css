@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#tabasco-side-bar {
+  @apply fixed top-0 right-0 w-full h-full z-[9999];
+}
+
+#tabasco-side-bar::before {
+  @apply absolute top-0 left-0 w-full h-full bg-gray-900 opacity-50;
+  content: "";
+}
+
+#tabasco-side-bar.inactive {
+  transition: background 0.2s ease 0.1s,width 0s ease 0.3s,height 0s ease 0.5s;
+  @apply w-[0px] h-0 bg-opacity-0;
+}
+
+
+#tabasco-side-bar.active {
+  @apply h-full bg-opacity-100;
+  width: calc(100% + 350px);
+}
+
+#tabasco-side-bar-content {
+  transition: transform 0.5s ease-in-out 0s;
+}
