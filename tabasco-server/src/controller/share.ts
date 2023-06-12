@@ -1,6 +1,7 @@
 import { Context } from 'hono';
 import { ShareRepositoryInterface } from '../domain/interface/share';
 import { ShareService } from '../service/share';
+import { ShareID } from '../types/share';
 
 interface Page {
 	title: string;
@@ -13,7 +14,7 @@ interface CreateShareRequest {
 }
 
 interface CreateShareResponse {
-	id: number;
+	id: ShareID;
 }
 
 interface GetShareResponse {
@@ -27,7 +28,7 @@ export class ShareController {
 		this.service = new ShareService(shareRepository);
 	}
 
-	async get(c: Context, id: number): Promise<GetShareResponse> {
+	async get(c: Context, id: ShareID): Promise<GetShareResponse> {
 		return await this.service.get(c, id);
 	}
 

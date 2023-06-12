@@ -12,7 +12,7 @@ const share = new Hono<{ Bindings: Env }>();
 
 share.get('/:id', async (c) => {
 	const controller = new ShareController(_shareRepository);
-	const id = Number(c.req.param('id'));
+	const id = c.req.param('id');
 	const result = await controller.get(c, id);
 	return c.json(result);
 });

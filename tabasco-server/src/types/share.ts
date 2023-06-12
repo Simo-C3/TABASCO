@@ -1,1 +1,1 @@
-export type ShareID = number;
+export type ShareID = string;
