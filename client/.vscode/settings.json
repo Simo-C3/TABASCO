@@ -3,9 +3,7 @@
   "files.eol": "\n",
   "json.schemas": [
     {
-      "fileMatch": [
-        "/manifest.json"
-      ],
+      "fileMatch": ["/manifest.json"],
       "url": "http://json.schemastore.org/chrome-manifest"
     }
   ],
@@ -17,5 +15,12 @@
   },
   "editor.quickSuggestions": {
     "strings": "on"
+  },
+
+  "[typescript]": {
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.tabSize": 2
   }
 }
