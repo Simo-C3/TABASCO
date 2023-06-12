@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { getBucket } from '@extend-chrome/storage';
-import {SidebarBucket} from './types'
 
 import "./index.css";
-
-const bucket = getBucket<SidebarBucket>('sidebar_bucket', 'sync');
 
 const Popup = () => {
   const [count, setCount] = useState(0);
