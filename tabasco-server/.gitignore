@@ -3,3 +3,6 @@ node_modules
 # secrets
 .env
 *.vars
+
+# databases
+db.sql*
