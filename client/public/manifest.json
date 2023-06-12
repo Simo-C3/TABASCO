@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
 
-  "name": "Chrome Extension Sample",
-  "description": "Chrome Extension Sample",
+  "name": "TABASCO",
+  "description": "TABASCO",
   "version": "1.0",
 
   "options_ui": {
-    "page": "options.html"
+    "page": "options.html",
+    "open_in_tab": true
   },
 
   "action": {
@@ -14,10 +15,21 @@
     "default_popup": "popup.html"
   },
 
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D",
+        "mac": "MacCtrl+Shift+D"
+      },
+      "description": "Run extension."
+    }
+  },
+
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["js/vendor.js", "js/content_script.js"]
+      "js": ["js/vendor.js", "js/content_script.js"],
+      "css": ["index.css"]
     }
   ],
 
@@ -25,7 +37,7 @@
     "service_worker": "js/background.js"
   },
 
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabs", "activeTab"],
 
   "host_permissions": ["<all_urls>"]
 }
