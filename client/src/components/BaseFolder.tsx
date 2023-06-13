@@ -5,6 +5,7 @@ type Props = {
   title: string;
   icon: string;
   width?: string;
+  size?: 'sm' | 'base' | 'lg';
   status?: 'open' | 'close';
 };
 
@@ -20,11 +21,37 @@ const BaseFolder = (props: Props) => {
     }
   };
 
+  const imgSizeHandler = () => {
+    switch (props.size) {
+      case 'sm':
+        return 'h-3 w-3';
+      case 'base':
+        return 'h-4 w-4';
+      case 'lg':
+        return 'h-5 w-5';
+      default:
+        return 'h-4 w-4';
+    }
+  };
+
+  const titleSizeHandler = () => {
+    switch (props.size) {
+      case 'sm':
+        return 'text-sm';
+      case 'base':
+        return 'text-base';
+      case 'lg':
+        return 'text-lg';
+      default:
+        return 'text-base';
+    }
+  };
+
   return (
     <div className='flex items-center'>
       {switchFolderStatus()}
-      <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className='mx-1 h-5 w-5 select-none' />
-      <span className='select-none text-lg'>{props.title}</span>
+      <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
+      <span className={`select-none ${titleSizeHandler()}`}>{props.title}</span>
     </div>
   );
 };

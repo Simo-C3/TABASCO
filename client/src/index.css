@@ -3,19 +3,18 @@
 @tailwind utilities;
 
 #tabasco-side-bar {
-  @apply fixed top-0 right-0 w-full h-full z-[9999];
+  @apply fixed right-0 top-0 z-[9999] h-full w-full;
 }
 
 #tabasco-side-bar::before {
-  @apply absolute top-0 left-0 w-full h-full bg-gray-900 opacity-50;
-  content: "";
+  @apply absolute left-0 top-0 h-full w-full bg-gray-900 opacity-50;
+  content: '';
 }
 
 #tabasco-side-bar.inactive {
-  transition: background 0.2s ease 0.1s,width 0s ease 0.3s,height 0s ease 0.5s;
-  @apply w-[0px] h-0 bg-opacity-0;
+  transition: background 0.2s ease 0.1s, width 0s ease 0.3s, height 0s ease 0.5s;
+  @apply h-0 w-[0px] bg-opacity-0;
 }
-
 
 #tabasco-side-bar.active {
   @apply h-full bg-opacity-100;
@@ -24,4 +23,27 @@
 
 #tabasco-side-bar-content {
   transition: transform 0.5s ease-in-out 0s;
+}
+
+#folder-selector {
+  height: 0px;
+  overflow-y: hidden;
+  padding: 0 5px;
+}
+
+#folder-selector::-webkit-scrollbar {
+  width: 3px;
+  border-radius: 2px;
+}
+#folder-selector::-webkit-scrollbar-track {
+  background-color: #ffffff;
+}
+#folder-selector::-webkit-scrollbar-thumb {
+  background-color: #d9d9d9;
+}
+
+#folder-selector.open {
+  height: 200px;
+  overflow-y: auto;
+  padding: 10px 5px;
 }
