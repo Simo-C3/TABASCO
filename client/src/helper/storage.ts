@@ -55,6 +55,10 @@ export class Bookmark {
     await chrome.storage.sync.set({ bookmarks: newBookmarks });
   }
 
+  async clear(): Promise<void> {
+    await chrome.storage.sync.remove(BookmarkStorageKey);
+  }
+
   async getBookmarksInFolder(parentId: BookmarkID) {
     const bookmarks = await this.load();
     return bookmarks.filter((o) => o.parentId == parentId);
