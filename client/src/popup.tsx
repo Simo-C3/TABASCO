@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { Bookmark } from './helper/storage';
 import { BaseBookmark } from './types';
+import { getTextByBody } from './helper/summary';
 
 const Popup = () => {
   const [count, setCount] = useState(0);
@@ -17,6 +18,16 @@ const Popup = () => {
   useEffect(() => {
     (async () => {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const activeTab = tabs[0];
+      const tabId = activeTab.id;
+      console.log(tabId);
+
+      const bodies = await chrome.scripting.executeScript({
+        target: { tabId: tabId! },
+        func: getTextByBody,
+      });
+      const textToSummarize = bodies[0].result;
+
       setCurrentURL(tabs[0].url || '');
       const bookmark = new Bookmark();
       const bookmarks = await bookmark.all();
@@ -48,8 +59,6 @@ const Popup = () => {
       title: '', // TODO: title variable
       url: tabs[0].url,
     });
-    const bookmarks = await bookmark.all();
-    setBookmarks(bookmarks);
   };
 
   const clearBookmark = async () => {
@@ -59,12 +68,20 @@ const Popup = () => {
   };
 
   useEffect(() => {
-    document.addEventListener('DOMContentLoaded', () => {
+    const onLoaded = () => {
       const buttonElement = document.getElementById('add-bookmark-button');
       const clearElement = document.getElementById('storage-clear-button');
       buttonElement?.addEventListener('click', addBookmark);
       clearElement?.addEventListener('click', clearBookmark);
-    });
+    };
+
+    document.addEventListener('DOMContentLoaded', onLoaded);
+
+    return () => {
+      document.removeEventListener('click', addBookmark);
+      document.removeEventListener('click', clearBookmark);
+      document.removeEventListener('DOMContentLoaded', onLoaded);
+    };
   }, []);
 
   return (
