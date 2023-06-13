@@ -2,14 +2,14 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 type PropsType = {
   name: string;
-  children_: string[];
-  children?: ReactNode;
+  contents?: string[];
 };
 
-export const AccordionMenu = ({ name, children_, children }: PropsType) => {
+export const AccordionMenu = ({ name, contents }: PropsType) => {
   const childElement = useRef<HTMLDivElement>(null);
-  const [showChildren, setshowChildren] = useState(false);
+  const [showChildren, setShowChildren] = useState(false);
   const [childHeight, setChildHeight] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (childElement.current) {
@@ -18,22 +18,28 @@ export const AccordionMenu = ({ name, children_, children }: PropsType) => {
     }
   }, []);
 
-  // 高さの取得
   const handleClick = () => {
     if (childElement.current) {
-      const childheight = childElement.current?.clientHeight;
-      console.log("childheight:", childheight);
-      alert("yaaaaaaaaaaaaaa!");
+      setIsOpen(true);
+      if (isOpen == true) {
+        setIsOpen(false);
+      }
     }
-    alert("hoge");
   };
 
-  // const onClickAccordionToggle = () => {
-  //   const sidebar = document.getElementById("tabasco-side-bar");
-  //   setShowContents(!showContents);
-  //   console.log("hegiht" + sidebar?.clientHeight);
-  //   alert("yaaaaaaaaaaaaaa!" + sidebar?.clientHeight);
-  // };
+  //配列の表示
+  const SetArticle = () => {
+    if (isOpen == false) {
+      null;
+    } else if (isOpen == true)
+      return (
+        <div>
+          {contents?.map((article) => {
+            return <p>{article}</p>;
+          })}
+        </div>
+      );
+  };
 
   return (
     <>
@@ -41,8 +47,14 @@ export const AccordionMenu = ({ name, children_, children }: PropsType) => {
         onClick={handleClick}
         className=" border-0 border-solid border-gray-300 bg-red-400"
       >
-        <span className={showChildren ? "isOpen" : "isClose"}>{name}</span>
+        <span
+          ref={childElement}
+          className={showChildren ? "isOpen" : "isClose"}
+        >
+          {name}
+        </span>
       </button>
+      <SetArticle />
     </>
   );
 };

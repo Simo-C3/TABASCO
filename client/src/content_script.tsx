@@ -63,7 +63,7 @@ const Sidebar = () => {
         {bookmarks.map((bookmark) => {
           return <a>{bookmark}</a>;
         })}
-        <AccordionMenu name="shimomo" children_={testDirectories} />
+        <AccordionMenu name="shimomo" contents={testDirectories} />
         <div>
           <select>
             {directories.map((directory) => (
