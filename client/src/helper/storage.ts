@@ -1,79 +1,71 @@
-import { RootId } from "../config";
-import type { BaseBookmark, BookmarkID, NewBookMark } from "../types";
+import { BookmarkStorageKey, RootId } from '../config';
+import type { BaseBookmark, BookmarkID, NewBookMark } from '../types';
 
 export class Bookmark {
-  private bookmarks: BaseBookmark[] = [];
-  private currentId: BookmarkID = 0;
-
-  constructor() {
-    this.loadBookmark();
+  private async load(): Promise<BaseBookmark[]> {
+    return (await chrome.storage.sync.get(BookmarkStorageKey))[BookmarkStorageKey] ?? [];
   }
 
-  async loadBookmark(): Promise<void> {
-    await chrome.storage.sync.get(
-      "bookmarks",
-      (items: { [key: string]: BaseBookmark[] }) => {
-        this.bookmarks = items.bookmarks;
-      }
-    );
+  private newId(bookmarks: BaseBookmark[]): BookmarkID {
+    return Math.max(...bookmarks.map((o) => o.id)) + 1;
   }
 
-  all(): BaseBookmark[] {
-    return this.bookmarks;
+  private newIndex(bookmarks: BaseBookmark[], parentId: BookmarkID): number {
+    return Math.max(...bookmarks.filter((o) => o.parentId === parentId).map((o) => o.index)) + 1;
   }
 
-  one(id: BookmarkID): BaseBookmark | undefined {
-    return this.bookmarks.find((o) => o.id == id);
+  async all(): Promise<BaseBookmark[]> {
+    return await this.load();
+  }
+
+  async one(id: BookmarkID): Promise<BaseBookmark | undefined> {
+    const bookmarks = await this.load();
+    return bookmarks.find((o) => o.id == id);
   }
 
   async create(bookmark: NewBookMark): Promise<BookmarkID> {
+    const bookmarks = await this.load();
+    const parentId = bookmark.parentId ?? RootId;
     const data: BaseBookmark = {
       ...bookmark,
-      id: this.currentId + 1,
-      index:
-        Math.max(
-          ...this.bookmarks
-            .filter((o) => o.parentId == data.parentId)
-            .map((o) => o.index)
-        ) + 1,
+      id: this.newId(bookmarks),
+      parentId: parentId,
+      index: this.newIndex(bookmarks, parentId),
       dateAddedLocal: new Date().getTime().toString(),
-      dateAddedUTC: new Date().getUTCDate().toString(),
+      dateAddedUTC: new Date().getTime().toString(),
     };
-    const newBookmarks = [...this.bookmarks, data].sort((l, r) => {
-      return l.parentId === r.parentId
-        ? l.index + r.index
-        : l.parentId + r.parentId;
+
+    const newBookmarks = [...bookmarks, data].sort((l, r) => {
+      return l.parentId === r.parentId ? l.index + r.index : l.parentId + r.parentId;
     });
+
     await chrome.storage.sync.set({ bookmarks: newBookmarks });
-    await this.loadBookmark();
     return data.id;
   }
 
   async update(id: BookmarkID, data: BaseBookmark): Promise<void> {
-    const newBookmarks = this.bookmarks.map((bookmark) =>
-      bookmark.id === id ? data : bookmark
-    );
+    const bookmarks = await this.load();
+    const newBookmarks = bookmarks.map((bookmark) => (bookmark.id === id ? data : bookmark));
     await chrome.storage.sync.set({ bookmarks: newBookmarks });
-    await this.loadBookmark();
   }
 
   async delete(id: BookmarkID): Promise<void> {
-    const newBookmarks = this.bookmarks.filter(
-      (bookmark) => bookmark.id !== id
-    );
+    const bookmarks = await this.load();
+    const newBookmarks = bookmarks.filter((bookmark) => bookmark.id !== id);
     await chrome.storage.sync.set({ bookmarks: newBookmarks });
-    await this.loadBookmark();
   }
 
-  getBookmarksInFolder(parentId: BookmarkID) {
-    return this.bookmarks.filter((o) => o.parentId == parentId);
+  async getBookmarksInFolder(parentId: BookmarkID) {
+    const bookmarks = await this.load();
+    return bookmarks.filter((o) => o.parentId == parentId);
   }
 
-  getFolders(): BaseBookmark[] {
-    return this.bookmarks.filter((o) => typeof o.url === undefined);
+  async getFolders(): Promise<BaseBookmark[]> {
+    const bookmarks = await this.load();
+    return bookmarks.filter((o) => typeof o.url === undefined);
   }
 
-  getFullPath = async (bookmark: BaseBookmark): Promise<string> => {
+  async getFullPath(bookmark: BaseBookmark): Promise<string> {
     let fullPath = bookmark.title;
     let parent = await this.one(bookmark.parentId);
 
@@ -83,5 +75,5 @@ export class Bookmark {
     }
 
     return fullPath;
-  };
+  }
 }
