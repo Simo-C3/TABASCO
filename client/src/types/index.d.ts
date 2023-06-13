@@ -4,8 +4,8 @@ export type BaseBookmark = {
   id: BookmarkID;
   index: number;
   title: string;
-  url: string | null;
-  icon: string | null;
+  url?: string;
+  icon?: string;
   parentId: number;
   dateAddedLocal: string;
   dateAddedUTC: string;
@@ -13,9 +13,9 @@ export type BaseBookmark = {
 
 export type NewBookMark = {
   title: string;
-  url: string | null;
-  icon: string | null;
-  parentId: number;
+  url?: string;
+  icon?: string;
+  parentId?: number;
 };
 
 export type SidebarBucket = {
