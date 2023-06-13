@@ -1,5 +1,5 @@
 import { BookmarkStorageKey, RootId } from '../config';
-import type { BaseBookmark, BookmarkID, NewBookMark } from '../types';
+import type { BaseBookmark, BookmarkID, Bookmarks, NewBookMark } from '../types';
 
 export class Bookmark {
   private async load(): Promise<BaseBookmark[]> {
@@ -79,5 +79,35 @@ export class Bookmark {
     }
 
     return fullPath;
+  }
+
+  private async makeTree(bookmarks: BaseBookmark[], parentId: BookmarkID): Promise<Bookmarks[]> {
+    const children = bookmarks.filter((o) => o.parentId === parentId);
+    const result = await children.map(async (o): Promise<Bookmarks> => {
+      const type = o.url ? 'page' : 'folder';
+      const bookmark: Bookmarks = {
+        id: o.id,
+        type: type,
+        title: o.title,
+        url: o.url,
+        icon: o.icon,
+        children: await this.makeTree(bookmarks, o.id),
+      };
+      if (type === 'page') delete bookmark.children;
+      return bookmark;
+    });
+    return await Promise.all(result);
+  }
+
+  async getBookmarkTree(): Promise<Bookmarks> {
+    const bookmarks = await this.load();
+    const root: Bookmarks = {
+      id: RootId,
+      type: 'folder',
+      title: 'root',
+      children: await this.makeTree(bookmarks, RootId),
+    };
+
+    return root;
   }
 }
