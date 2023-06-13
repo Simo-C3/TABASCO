@@ -1,78 +1,65 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import { Bookmark } from './helper/storage';
+
+const getQueryParam = (url: string, param: string): string | null => {
+  const params = new URLSearchParams(new URL(url).search);
+  return params.get(param);
+};
+
+interface Share {
+  title: string;
+  pages: {
+    title: string;
+    url: string;
+  }[];
+}
+
+const apiShareRequest = async (id: string): Promise<Share> => {
+  const result = await fetch(
+    `https://tabasco-server.kurichi.workers.dev/api/v1/share/${id}`,
+  );
+  return await result.json();
+};
 
 const Options = () => {
-  const [color, setColor] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
-  const [like, setLike] = useState<boolean>(false);
+  const [result, setResult] = useState<Share>();
+  const bookmark = new Bookmark();
 
   useEffect(() => {
-    // Restores select box and checkbox state using the preferences
-    // stored in chrome.storage.
-    chrome.storage.sync.get(
-      {
-        favoriteColor: "red",
-        likesColor: true,
-      },
-      (items) => {
-        setColor(items.favoriteColor);
-        setLike(items.likesColor);
-      }
-    );
+    const url = window.location.href;
+    const id = getQueryParam(url, 'id');
+    if (id) {
+      apiShareRequest(id).then(async (result) => {
+        setResult(result);
+        const groupId = await bookmark.create({
+          title: result.title,
+        });
+        for (const page of result.pages) {
+          await bookmark.create({
+            title: page.title,
+            url: page.url,
+            parentId: groupId,
+          });
+        }
+      });
+    }
   }, []);
 
-  const saveOptions = () => {
-    // Saves options to chrome.storage.sync.
-    chrome.storage.sync.set(
-      {
-        favoriteColor: color,
-        likesColor: like,
-      },
-      () => {
-        // Update status to let user know options were saved.
-        setStatus("Options saved.");
-        const id = setTimeout(() => {
-          setStatus("");
-        }, 1000);
-        return () => clearTimeout(id);
-      }
-    );
-  };
-
   return (
-    <>
-      <div className="text-red-300">
-        Favorite color:{" "}
-        <select
-          value={color}
-          onChange={(event) => setColor(event.target.value)}
-        >
-          <option value="red">red</option>
-          <option value="green">green</option>
-          <option value="blue">blue</option>
-          <option value="yellow">yellow</option>
-        </select>
-      </div>
+    <div>
+      <div>{result?.title}</div>
       <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={like}
-            onChange={(event) => setLike(event.target.checked)}
-          />
-          I like colors.
-        </label>
+        {result?.pages.map((value, index) => (
+          <div key={index}>
+            <p>{value.title}</p>
+            <p>{value.url}</p>
+          </div>
+        ))}
       </div>
-      <div>{status}</div>
-      <button onClick={saveOptions}>Save</button>
-    </>
+    </div>
   );
 };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Options />
-  </React.StrictMode>,
-  document.getElementById("root")
-);
+ReactDOM.render(<Options />, document.getElementById('root'));
