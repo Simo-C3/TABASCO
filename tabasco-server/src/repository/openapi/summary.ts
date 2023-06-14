@@ -6,6 +6,17 @@ import type { Summary, SummaryRepositoryInterface, SummaryResult } from '../../d
 
 class SummaryRepository implements SummaryRepositoryInterface {
 	private convertContent(data: Summary): string {
+		if (data.text.length > 2000) {
+			const dataList = data.text.split('\n');
+			let content = `summarize this in about 200 characters in Japanese. title: ${data.title}, body:`;
+			for (const data of dataList) {
+				if ((content + data).length > 3000) {
+					break;
+				}
+				content += data;
+			}
+			return content;
+		}
 		const content = `summarize this in about 200 characters in Japanese. title：${data.title}, body:${data.text}`;
 		return content;
 	}
