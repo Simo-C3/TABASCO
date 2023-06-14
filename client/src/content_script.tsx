@@ -4,14 +4,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
 import { Bookmark } from './helper/storage';
-import { BaseBookmark } from './types';
+import { BaseBookmark, Bookmarks } from './types';
+import { RootId } from './config';
 
 const Sidebar = () => {
   const [sidebarStatus, setSidebarStatus] = useState(false);
   const [bookmarks, setBookmarks] = useState<BaseBookmark[]>([]);
   const [count, setCount] = useState(0);
-  const directories = ['hogehoge', 'fugafuga', 'tamtam'];
-  const testDirectories = ['kurichi', 'shimo', 'iori'];
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
     if (!sidebarStatus && window.innerWidth - e.clientX < 10) {
@@ -65,14 +64,8 @@ const Sidebar = () => {
             </div>
           );
         })}
-        <AccordionMenu name='shimomo' contents={testDirectories} />
-        <div>
-          <select>
-            {directories.map((directory) => (
-              <option value={directory}>{directory}</option>
-            ))}
-          </select>
-        </div>
+        {/* <br />
+        <AccordionMenu contents={testBookmarks} /> */}
       </div>
     </>
   );
