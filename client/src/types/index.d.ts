@@ -1,4 +1,7 @@
+import { Bookmark } from '../helper/storage';
+
 export type BookmarkID = number;
+export type BookmarkType = 'page' | 'folder';
 
 export type BaseBookmark = {
   id: BookmarkID;
@@ -18,6 +21,21 @@ export type NewBookMark = {
   parentId?: number;
 };
 
+export type Bookmarks = {
+  id: BookmarkID;
+  type: BookmarkType;
+  title: string;
+  icon?: string;
+  url?: string;
+  children?: Bookmarks[];
+};
+
 export type SidebarBucket = {
   bookmarks: BaseBookmark[];
+};
+
+export type Folder = {
+  id: BookmarkID;
+  title: string;
+  icon: string;
 };
