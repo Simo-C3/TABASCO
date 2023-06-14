@@ -11,44 +11,6 @@ const Sidebar = () => {
   const [sidebarStatus, setSidebarStatus] = useState(false);
   const [bookmarks, setBookmarks] = useState<BaseBookmark[]>([]);
   const [count, setCount] = useState(0);
-  const testBookmarks: Bookmarks = {
-    id: RootId,
-    type: 'folder',
-    title: 'root',
-    children: [
-      {
-        id: 1,
-        title: 'tabasco',
-        type: 'folder',
-        children: [
-          {
-            id: 2,
-            title: 'kurichi',
-            url: 'https://google.com',
-            type: 'page',
-          },
-          {
-            id: 3,
-            title: 'tim',
-            url: 'https://twitter.com',
-            type: 'page',
-          },
-          {
-            id: 4,
-            title: 'shimomo',
-            url: 'https://youtube.com',
-            type: 'page',
-          },
-        ],
-      },
-      {
-        id: 100,
-        title: 'notion',
-        url: 'https://notion.so',
-        type: 'page',
-      },
-    ],
-  };
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
     if (!sidebarStatus && window.innerWidth - e.clientX < 10) {
@@ -102,8 +64,8 @@ const Sidebar = () => {
             </div>
           );
         })}
-        <br />
-        <AccordionMenu contents={testBookmarks} />
+        {/* <br />
+        <AccordionMenu contents={testBookmarks} /> */}
       </div>
     </>
   );
