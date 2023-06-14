@@ -9,8 +9,10 @@ import { getTextByBody } from './helper/summary';
 
 const Popup = () => {
   let url = '';
+  let icon = '';
   let selectedFolderID = RootId;
   let summary = { isEnabled: false, format: 'default', language: 'jp' };
+  let textToSummarize = '';
 
   // html element references
   const addBookmarkButton = useRef<HTMLButtonElement>(null);
@@ -23,6 +25,7 @@ const Popup = () => {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     const activeTab = tabs[0];
     url = activeTab.url!;
+    icon = activeTab.favIconUrl!;
     titleInput.current!.value = activeTab.title || '';
     titleInput.current?.select();
 
@@ -31,7 +34,7 @@ const Popup = () => {
       target: { tabId: tabId! },
       func: getTextByBody,
     });
-    const textToSummarize = bodies[0].result;
+    textToSummarize = bodies[0].result;
 
     // ストレージからフォルダ一覧を取得
     const bookmark = new Bookmark();
