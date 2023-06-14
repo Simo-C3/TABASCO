@@ -9,6 +9,7 @@ export type BaseBookmark = {
   title: string;
   url?: string;
   icon?: string;
+  summary?: string;
   parentId: number;
   dateAddedLocal: string;
   dateAddedUTC: string;
