@@ -7,10 +7,12 @@ export class Bookmark {
   }
 
   private newId(bookmarks: BaseBookmark[]): BookmarkID {
+    if (bookmarks.length === 0) return 1;
     return Math.max(...bookmarks.map((o) => o.id)) + 1;
   }
 
   private newIndex(bookmarks: BaseBookmark[], parentId: BookmarkID): number {
+    if (bookmarks.length === 0) return 1;
     return Math.max(...bookmarks.filter((o) => o.parentId === parentId).map((o) => o.index)) + 1;
   }
 
@@ -20,7 +22,11 @@ export class Bookmark {
 
   async one(id: BookmarkID): Promise<BaseBookmark | undefined> {
     const bookmarks = await this.load();
-    return bookmarks.find((o) => o.id == id);
+    console.log(bookmarks);
+
+    const target = bookmarks.find((o) => o.id === id);
+    console.log(target);
+    return bookmarks.find((o) => o.id === id);
   }
 
   async create(bookmark: NewBookMark): Promise<BookmarkID> {
@@ -43,9 +49,16 @@ export class Bookmark {
     return data.id;
   }
 
-  async update(id: BookmarkID, data: BaseBookmark): Promise<void> {
+  async update(id: BookmarkID, data: Partial<BaseBookmark>): Promise<void> {
     const bookmarks = await this.load();
-    const newBookmarks = bookmarks.map((bookmark) => (bookmark.id === id ? data : bookmark));
+    const newBookmarks = bookmarks.map((bookmark) =>
+      bookmark.id === id
+        ? {
+            ...bookmark,
+            ...data,
+          }
+        : bookmark,
+    );
     await chrome.storage.sync.set({ bookmarks: newBookmarks });
   }
 
