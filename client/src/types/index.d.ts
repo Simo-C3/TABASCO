@@ -33,3 +33,9 @@ export type Bookmarks = {
 export type SidebarBucket = {
   bookmarks: BaseBookmark[];
 };
+
+export type Folder = {
+  id: BookmarkID;
+  title: string;
+  icon: string;
+};
