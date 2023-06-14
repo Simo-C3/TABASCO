@@ -1,0 +1,21 @@
+{
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "files.eol": "\n",
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/manifest.json"
+      ],
+      "url": "http://json.schemastore.org/chrome-manifest"
+    }
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports": true,
+    "source.fixAll.eslint": true
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  }
+}
