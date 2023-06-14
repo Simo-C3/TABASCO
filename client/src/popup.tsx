@@ -5,6 +5,7 @@ import { Bookmark } from './helper/storage';
 import { RootId } from './config';
 import Folders from './components/Folders';
 import Summary from './components/Summary';
+import { getTextByBody } from './helper/summary';
 
 const Popup = () => {
   let url = '';
@@ -24,6 +25,13 @@ const Popup = () => {
     url = activeTab.url!;
     titleInput.current!.value = activeTab.title || '';
     titleInput.current?.select();
+
+    const tabId = activeTab.id;
+    const bodies = await chrome.scripting.executeScript({
+      target: { tabId: tabId! },
+      func: getTextByBody,
+    });
+    const textToSummarize = bodies[0].result;
 
     // ストレージからフォルダ一覧を取得
     const bookmark = new Bookmark();
