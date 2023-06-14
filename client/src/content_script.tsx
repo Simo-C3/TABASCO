@@ -4,12 +4,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
 import { Bookmark } from './helper/storage';
-import { BaseBookmark, Bookmarks } from './types';
-import { RootId } from './config';
+import type { Bookmarks } from './types';
 
 const Sidebar = () => {
   const [sidebarStatus, setSidebarStatus] = useState(false);
-  const [bookmarks, setBookmarks] = useState<BaseBookmark[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmarks>();
   const [count, setCount] = useState(0);
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
@@ -30,14 +29,14 @@ const Sidebar = () => {
     const onChangedStorage = async (changes: { [key: string]: any }, namespace: 'sync' | 'local' | 'managed' | 'session') => {
       if (namespace !== 'sync') return;
       const bookmark = new Bookmark();
-      const bookmarks = await bookmark.all();
+      const bookmarks = await bookmark.getBookmarkTree();
       setBookmarks(bookmarks);
     };
     chrome.storage.onChanged.addListener(onChangedStorage);
 
     (async () => {
       const bookmark = new Bookmark();
-      const bookmarks = await bookmark.all();
+      const bookmarks = await bookmark.getBookmarkTree();
       setBookmarks(bookmarks);
     })();
 
@@ -55,17 +54,7 @@ const Sidebar = () => {
         }`}
       >
         <span>Hello World</span>
-        <div>{count}</div>
-        {bookmarks.map((bookmark) => {
-          return (
-            <div>
-              {bookmark.title}
-              {bookmark.url}
-            </div>
-          );
-        })}
-        {/* <br />
-        <AccordionMenu contents={testBookmarks} /> */}
+        {bookmarks && <AccordionMenu contents={bookmarks} />}
       </div>
     </>
   );
