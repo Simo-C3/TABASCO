@@ -1,14 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { Bookmark } from './helper/storage';
 import { RootId } from './config';
 import Folders from './components/Folders';
+import Summary from './components/Summary';
 import { getTextByBody } from './helper/summary';
 
 const Popup = () => {
   let url = '';
   let selectedFolderID = RootId;
+  let summary = { isEnabled: false, format: 'default', language: 'jp' };
 
   // html element references
   const addBookmarkButton = useRef<HTMLButtonElement>(null);
@@ -77,28 +79,11 @@ const Popup = () => {
           <input id='tab-title-input' ref={titleInput} autoFocus className='w-full rounded-lg bg-gray-200 px-3 py-2' />
         </div>
         <div ref={folderElement} />
-
-        <div className='mt-3 flex items-center py-1 pl-0 text-base'>
-          <input id='summary-input' type='checkbox' className='mx-3' />
-          <span>要約</span>
-        </div>
-        {/* ↓ToDo: 要約がfalseの時は非表示 */}
-        <div className='my-1 pl-14 text-sm'>
-          <div className='mb-2 flex items-center justify-between'>
-            <span>フォーマット</span>
-            <select name='format' id='summary-format-select'>
-              <option value='default'>標準</option>
-              <option value='list'>リスト</option>
-            </select>
-          </div>
-          <div className='flex items-center justify-between'>
-            <span>翻訳</span>
-            <select name='language' id='summary-language-select'>
-              <option value='jp'>日本語</option>
-              <option value='en'>英語</option>
-            </select>
-          </div>
-        </div>
+        <Summary
+          onChange={(v) => {
+            summary = v;
+          }}
+        />
         <div className='my-2 flex items-center justify-between py-1 text-base'>
           <div className='flex items-center'>
             <input id='summary-input' type='checkbox' className='mx-3' />
@@ -138,9 +123,4 @@ const Popup = () => {
   );
 };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Popup />
-  </React.StrictMode>,
-  document.getElementById('root'),
-);
+ReactDOM.render(<Popup />, document.getElementById('root'));
