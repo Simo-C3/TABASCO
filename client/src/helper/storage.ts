@@ -1,5 +1,5 @@
 import { BookmarkStorageKey, RootId } from '../config';
-import type { BaseBookmark, BookmarkID, NewBookMark } from '../types';
+import type { BaseBookmark, BookmarkID, Folder, NewBookMark } from '../types';
 
 export class Bookmark {
   private async load(): Promise<BaseBookmark[]> {
@@ -64,9 +64,9 @@ export class Bookmark {
     return bookmarks.filter((o) => o.parentId == parentId);
   }
 
-  async getFolders(): Promise<BaseBookmark[]> {
+  async getFolders(): Promise<Folder[]> {
     const bookmarks = await this.load();
-    return bookmarks.filter((o) => typeof o.url === undefined);
+    return bookmarks.filter((o) => o.url === undefined || o.url === '').map((o) => ({ id: o.id, title: o.title, icon: o.icon! }));
   }
 
   async getFullPath(bookmark: BaseBookmark): Promise<string> {

@@ -21,3 +21,9 @@ export type NewBookMark = {
 export type SidebarBucket = {
   bookmarks: BaseBookmark[];
 };
+
+export type Folder = {
+  id: BookmarkID;
+  title: string;
+  icon: string;
+};
