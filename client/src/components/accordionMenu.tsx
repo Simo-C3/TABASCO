@@ -9,6 +9,7 @@ type PropsType = {
 
 export const AccordionMenu = ({ contents }: PropsType) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isRoot = contents.id === RootId;
 
   const handleClick = () => {
     setIsOpen((prev) => !prev);
@@ -17,7 +18,7 @@ export const AccordionMenu = ({ contents }: PropsType) => {
   //配列の表示
   const SetArticle = () => {
     return (
-      <div className='pl-5'>
+      <div className={isRoot ? '' : 'pl-5'}>
         {contents.children?.map((article) => {
           if (article.type === 'page') {
             return <Page contents={article} />;
@@ -28,7 +29,7 @@ export const AccordionMenu = ({ contents }: PropsType) => {
     );
   };
 
-  if (contents.id === RootId) {
+  if (isRoot) {
     return <SetArticle />;
   }
 
