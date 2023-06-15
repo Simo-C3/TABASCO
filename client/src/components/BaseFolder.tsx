@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, useEffect, useRef } from 'react';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 
 type Props = {
@@ -12,9 +12,19 @@ type Props = {
   pointer?: boolean;
   folderElement?: RefObject<HTMLDivElement>;
   className?: string;
+  onClick?: (event: MouseEvent) => void;
 };
 
 const BaseFolder = (props: Props) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    props.onClick && ref.current?.addEventListener('click', props.onClick!, false);
+    return () => {
+      props.onClick && ref.current?.removeEventListener('click', props.onClick!);
+    };
+  });
+
   const switchFolderStatus = () => {
     switch (props.status) {
       case 'open':
@@ -54,7 +64,7 @@ const BaseFolder = (props: Props) => {
 
   return (
     <div
-      ref={props.folderElement}
+      ref={ref}
       id={typeof props.columnId === 'number' ? `${props.columnId}-folder-${props.id}` : `folder-${props.id}`}
       title={props.title}
       className={`flex items-center overflow-hidden ${props.className}`}

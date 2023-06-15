@@ -36,6 +36,11 @@ const Options = () => {
   };
 
   useEffect(() => {
+    getShare();
+    ReactDOM.render(<Column rerendering={rerendering} />, column.current!);
+  }, []);
+
+  const getShare = () => {
     const url = window.location.href;
     const id = getQueryParam(url, 'id');
     if (id) {
@@ -53,9 +58,7 @@ const Options = () => {
         }
       });
     }
-
-    ReactDOM.render(<Column rerendering={rerendering} />, column.current!);
-  }, []);
+  };
 
   return (
     <div className='h-screen w-screen'>
