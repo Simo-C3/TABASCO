@@ -21,10 +21,6 @@
   width: calc(100% + 350px);
 }
 
-#tabasco-side-bar-content {
-  transition: transform 0.5s ease-in-out 0s;
-}
-
 #folder-selector {
   height: 0px;
   overflow-y: hidden;
