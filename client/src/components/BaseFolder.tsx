@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import { MdChevronRight, MdExpandMore } from 'react-icons/md';
+import { MdChevronRight, MdExpandMore, MdFolderOpen } from 'react-icons/md';
 
 type Props = {
   id: number;
@@ -60,7 +60,7 @@ const BaseFolder = (props: Props) => {
       className={`flex items-center overflow-hidden ${props.className}`}
     >
       {switchFolderStatus()}
-      <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
+      <MdFolderOpen className={`mx-1 select-none ${imgSizeHandler()}`} />
       <span className={`select-none whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
     </div>
   );
