@@ -64,6 +64,13 @@ export class Bookmark {
 
   async delete(id: BookmarkID): Promise<void> {
     const bookmarks = await this.load();
+    const target = bookmarks.find((o) => o.id === id);
+    if (target?.url === undefined) {
+      const children = await this.getBookmarksInFolder(id);
+      for (const child of children) {
+        await this.delete(child.id);
+      }
+    }
     const newBookmarks = bookmarks.filter((bookmark) => bookmark.id !== id);
     await chrome.storage.sync.set({ bookmarks: newBookmarks });
   }
@@ -123,5 +130,22 @@ export class Bookmark {
     };
 
     return root;
+  }
+
+  onChanged<T extends Bookmarks | BaseBookmark[]>(type: 'array' | 'tree', callback: (bookmark: T) => void): () => void {
+    const listener = async (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+      if (areaName !== 'sync') return;
+      if (type === 'array') {
+        const bookmarks = await this.all();
+        callback(bookmarks as T);
+      } else if (type === 'tree') {
+        const bookmarks = await this.getBookmarkTree();
+        callback(bookmarks as T);
+      }
+    };
+    chrome.storage.onChanged.addListener(listener);
+    return () => {
+      chrome.storage.onChanged.removeListener(listener);
+    };
   }
 }
