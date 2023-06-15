@@ -55,17 +55,6 @@ export const AccordionMenu = ({ contents }: PropsType) => {
           <div onClick={handleClick}>
             <BaseFolder id={contents.id} title={contents.title} />
           </div>
-          {/* <div className='text-left'>
-            <MdFolderOpen className='align-middle' />
-          </div>
-          <div className='flex '>
-            <button
-              onClick={handleClick}
-              className=' flex h-[20px] w-[200px] items-center border-[0px]  border-solid bg-white pl-[4px] text-[18px]  text-black hover:bg-blue-100 hover:text-black'
-            >
-              <span className=' leading-none'>{contents.title}</span>
-            </button>
-          </div> */}
           <div>
             <MdMoreVert onClick={pullDownClick} />
           </div>
