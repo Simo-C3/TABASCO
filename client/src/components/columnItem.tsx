@@ -1,10 +1,9 @@
-import React, { RefObject, createRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bookmarks } from '../types';
+import { MdChevronRight } from 'react-icons/md';
 
 import BaseFolder from './BaseFolder';
 import BaseLink from './BaseLink';
-import { MdChevronRight } from 'react-icons/md';
-import { render } from 'react-dom';
 
 type Props = {
   index: number;
@@ -13,75 +12,49 @@ type Props = {
   folderItems: Bookmarks[];
   className?: string;
   onClick?: (e: MouseEvent) => void;
-  openFolder: (columnIndex: number, folderId: number) => void;
+  openFolder: (folderId: number) => void;
 };
 
 const ColumnItem = (props: Props) => {
-  const folders = useRef<Bookmarks[]>([]);
-  const pages = useRef<Bookmarks[]>([]);
-  const folderElements = useRef<RefObject<HTMLDivElement>[]>([]);
-
-  const newFolderElement = useRef<HTMLInputElement>(null);
-  const newFolderTitleElement = useRef<HTMLInputElement>(null);
-  const newFolderTitleContainer = useRef<HTMLDivElement>(null);
-  const showNewFolderTitleElement = useRef<boolean>(false);
   const leftFrame = useRef<HTMLDivElement>(null);
   const splitter = useRef<HTMLDivElement>(null);
+  const newFolderButton = useRef<HTMLInputElement>(null);
+  const newFolderTitleInput = useRef<HTMLInputElement>(null);
+  const newFolderTitleContainer = useRef<HTMLDivElement>(null);
 
-  folders.current = props.folderItems.filter((item) => {
-    return item.type === 'folder';
-  });
-
-  pages.current = props.folderItems.filter((item) => {
-    return item.type === 'page';
-  });
+  const [folders, setFolders] = useState<Bookmarks[]>([]);
+  const [pages, setPages] = useState<Bookmarks[]>([]);
 
   useEffect(() => {
-    // folders.current.forEach((folder, index) => {
-    //   const event = folderClickHandler(folder.id);
-    //   folderElements.current[index].current!.addEventListener('click', event, false);
-    //   folderElementsEventListeners.set(folderElements.current[index].current!, event);
-    // });
+    const folders = props.folderItems.filter((item) => item.type === 'folder');
+    setFolders(folders);
 
-    console.log(props.index, props.isFocus);
-    newFolderElement.current?.addEventListener('click', newFolderClickHandler, false);
+    const pages = props.folderItems.filter((item) => item.type === 'page');
+    setPages(pages);
+  }, [props.folderItems]);
+
+  useEffect(() => {
     props.onClick && leftFrame.current?.addEventListener('click', props.onClick, false);
+    newFolderButton.current?.addEventListener('click', newFolderClickHandler, false);
     splitter.current?.addEventListener('mousedown', onMouseDownHandler, false);
 
     return () => {
-      console.log('return', props.index);
-      // for (const [element, event] of folderElementsEventListeners) {
-      //   element.removeEventListener('click', event);
-      // }
-      // folderElementsEventListeners.clear();
-      newFolderElement.current?.removeEventListener('click', newFolderClickHandler, false);
+      props.onClick && leftFrame.current?.addEventListener('click', props.onClick, false);
+      newFolderButton.current?.removeEventListener('click', newFolderClickHandler, false);
+      splitter.current?.addEventListener('mousedown', onMouseDownHandler, false);
     };
   }, [props.isFocus]);
 
-  // const folderClickHandler = (id: number) => {
-  //   return () => {
-  //     props.openFolder(props.index, id);
-  //   };
-  // };
-
-  // const onLeftFrameMouseClickHandler = () => {
-  //   props.onClick();
-  //   leftFrame.current!.style.border = '3px solid rgb(255, 246, 246)';
-  // };
-
   const newFolderClickHandler = () => {
-    console.log('newFolderClickHandler');
-    showNewFolderTitleElement.current = true;
-    if (newFolderTitleElement.current) newFolderTitleElement.current!.addEventListener('blur', newFolderTitleBlurHandler, false);
+    if (newFolderTitleInput.current) newFolderTitleInput.current!.addEventListener('blur', newFolderTitleBlurHandler, false);
     newFolderTitleContainer.current?.classList.remove('hidden');
-    newFolderTitleElement.current!.focus();
+    newFolderTitleInput.current!.focus();
   };
 
   const newFolderTitleBlurHandler = () => {
-    showNewFolderTitleElement.current = false;
-    newFolderTitleElement.current!.value = '';
+    newFolderTitleInput.current!.value = '';
     newFolderTitleContainer.current?.classList.add('hidden');
-    if (newFolderTitleElement.current) newFolderTitleElement.current!.removeEventListener('blur', newFolderTitleBlurHandler, false);
+    if (newFolderTitleInput.current) newFolderTitleInput.current!.removeEventListener('blur', newFolderTitleBlurHandler, false);
   };
 
   const onMouseDownHandler = () => {
@@ -122,31 +95,31 @@ const ColumnItem = (props: Props) => {
         } ${props.className}`}
       >
         {/* 新しいファイルの名前入力 */}
-        <div ref={newFolderTitleContainer} className='my-2 flex hidden w-full items-center px-1'>
-          <MdChevronRight className='h-5 w-5' />
-          <input ref={newFolderTitleElement} className='mx-1 w-[calc(100%-1.25rem)] rounded-lg bg-gray-100 px-2 py-1' />
+        <div ref={newFolderTitleContainer} className='hidden'>
+          <div className='my-2 flex w-full items-center px-1'>
+            <MdChevronRight className='h-5 w-5' />
+            <input ref={newFolderTitleInput} className='mx-1 w-[calc(100%-1.25rem)] rounded-lg bg-gray-100 px-2 py-1' />
+          </div>
         </div>
         {/* フォルダの表示 */}
-        {folders.current.map((item: Bookmarks, index: number) => {
+        {folders.map((item: Bookmarks, index: number) => {
           return (
             <BaseFolder
               key={index}
               id={item.id}
-              columnId={props.index}
               status='close'
               title={item.title}
               icon={item.icon}
               size='lg'
-              folderElement={folderElements.current[index]}
               className={`my-1 cursor-pointer rounded-md px-1 py-1 hover:bg-red-100 ${item.id === props.openFolderId ? 'bg-red-100' : ''}`}
               onClick={() => {
-                props.openFolder(props.index, item.id);
+                props.openFolder(item.id);
               }}
             />
           );
         })}
         {/* ページの表示 */}
-        {pages.current.map((item: Bookmarks, index: number) => {
+        {pages.map((item: Bookmarks, index: number) => {
           return (
             <BaseLink
               key={index}
@@ -166,7 +139,7 @@ const ColumnItem = (props: Props) => {
         />
         {props.isFocus ? (
           <div
-            ref={newFolderElement}
+            ref={newFolderButton}
             id='new-folder-element'
             className='sticky bottom-1 left-1/2 m-0 w-32 -translate-x-1/2 cursor-pointer select-none rounded-lg bg-white px-3 py-1 text-center drop-shadow-md'
           >

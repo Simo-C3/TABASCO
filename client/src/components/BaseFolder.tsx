@@ -3,14 +3,12 @@ import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 
 type Props = {
   id: number;
-  columnId?: number;
   title: string;
   icon?: string;
   width?: string;
   size?: 'sm' | 'base' | 'lg';
   status?: 'open' | 'close';
   pointer?: boolean;
-  folderElement?: RefObject<HTMLDivElement>;
   className?: string;
   onClick?: (event: MouseEvent) => void;
 };
@@ -63,12 +61,7 @@ const BaseFolder = (props: Props) => {
   };
 
   return (
-    <div
-      ref={ref}
-      id={typeof props.columnId === 'number' ? `${props.columnId}-folder-${props.id}` : `folder-${props.id}`}
-      title={props.title}
-      className={`flex items-center overflow-hidden ${props.className}`}
-    >
+    <div ref={ref} title={props.title} className={`flex items-center overflow-hidden ${props.className}`}>
       {switchFolderStatus()}
       <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
       <span className={`select-none whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
