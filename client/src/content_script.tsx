@@ -34,22 +34,13 @@ const Sidebar = () => {
   });
 
   useEffect(() => {
-    const onChangedStorage = async (changes: { [key: string]: any }, namespace: 'sync' | 'local' | 'managed' | 'session') => {
-      if (namespace !== 'sync') return;
-      const bookmark = new Bookmark();
-      const bookmarks = await bookmark.getBookmarkTree();
-      setBookmarks(bookmarks);
-    };
-    chrome.storage.onChanged.addListener(onChangedStorage);
-
-    (async () => {
-      const bookmark = new Bookmark();
-      const bookmarks = await bookmark.getBookmarkTree();
-      setBookmarks(bookmarks);
-    })();
+    const bookmark = new Bookmark();
+    const unsubscribe = bookmark.onChanged<Bookmarks>('tree', (newBookmarks) => {
+      setBookmarks(newBookmarks);
+    });
 
     return () => {
-      chrome.storage.onChanged.removeListener(onChangedStorage);
+      unsubscribe();
     };
   }, []);
 
