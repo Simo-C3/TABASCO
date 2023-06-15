@@ -111,13 +111,13 @@ const Popup = () => {
             追加
           </button>
         </div>
-        {/* <button
-            ref={clearBookmarkButton}
-            className='pointer-events-auto my-5 block cursor-pointer rounded-lg bg-gray-200 px-5 py-2'
-            id='storage-clear-button'
-          >
-            clear
-          </button> */}
+        <button
+          ref={clearBookmarkButton}
+          className='pointer-events-auto my-5 block cursor-pointer rounded-lg bg-gray-200 px-5 py-2'
+          id='storage-clear-button'
+        >
+          clear
+        </button>
       </div>
     </>
   );

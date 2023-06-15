@@ -14,14 +14,13 @@ const Sidebar = () => {
   const testDirectories = ['kurichi', 'shimo', 'iori'];
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
+    const sideBarElement = document.getElementById('tabasco-side-bar');
     if (!sidebarStatus && window.innerWidth - e.clientX < 10) {
       setSidebarStatus(true);
-      const sideBarElement = document.getElementById('tabasco-side-bar');
       sideBarElement?.classList.remove('inactive');
       sideBarElement?.classList.add('active');
     } else if (sidebarStatus && window.innerWidth - e.clientX > document.getElementById('tabasco-side-bar-content')?.clientWidth!) {
       setSidebarStatus(false);
-      const sideBarElement = document.getElementById('tabasco-side-bar');
       sideBarElement?.classList.remove('active');
       sideBarElement?.classList.add('inactive');
     }
