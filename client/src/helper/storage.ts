@@ -104,6 +104,7 @@ export class Bookmark {
         title: o.title,
         url: o.url,
         icon: o.icon,
+        summary: o.summary,
         children: await this.makeTree(bookmarks, o.id),
       };
       if (type === 'page') delete bookmark.children;

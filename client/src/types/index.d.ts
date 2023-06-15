@@ -1,5 +1,3 @@
-import { Bookmark } from '../helper/storage';
-
 export type BookmarkID = number;
 export type BookmarkType = 'page' | 'folder';
 
@@ -20,6 +18,7 @@ export type NewBookMark = {
   url?: string;
   icon?: string;
   parentId?: number;
+  summary?: string;
 };
 
 export type Bookmarks = {
@@ -28,6 +27,7 @@ export type Bookmarks = {
   title: string;
   icon?: string;
   url?: string;
+  summary?: string;
   children?: Bookmarks[];
 };
 

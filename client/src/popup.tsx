@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { Bookmark } from './helper/storage';
@@ -13,12 +13,15 @@ const Popup = () => {
   let selectedFolderID = RootId;
   let summary = { isEnabled: false, format: 'default', language: 'jp' };
   let textToSummarize = '';
+  let summarizedText: string;
 
   // html element references
   const addBookmarkButton = useRef<HTMLButtonElement>(null);
   const clearBookmarkButton = useRef<HTMLButtonElement>(null);
+  const summaryButton = useRef<HTMLButtonElement>(null);
   const titleInput = useRef<HTMLInputElement>(null);
   const folderElement = useRef<HTMLDivElement>(null);
+  const summaryElement = useRef<HTMLDivElement>(null);
 
   const asyncInit = async () => {
     // 現在のタブ情報取得
@@ -55,17 +58,24 @@ const Popup = () => {
     // イベントを登録
     addBookmarkButton.current?.addEventListener('click', addBookmark);
     clearBookmarkButton.current?.addEventListener('click', clearBookmark);
+    summaryButton.current?.addEventListener('click', summarize);
     asyncInit();
 
     return () => {
       addBookmarkButton.current?.removeEventListener('click', addBookmark);
       clearBookmarkButton.current?.removeEventListener('click', clearBookmark);
+      summaryButton.current?.removeEventListener('click', summarize);
     };
   }, []);
 
   const addBookmark = async () => {
     const bookmark = new Bookmark();
-    await bookmark.create({ title: titleInput.current!.value, url: url, parentId: selectedFolderID });
+    if (summary.isEnabled) {
+      await bookmark.create({ title: titleInput.current!.value, url, parentId: selectedFolderID, icon, summary: summarizedText });
+    } else {
+      await bookmark.create({ title: titleInput.current!.value, url, parentId: selectedFolderID, icon });
+    }
+
     window.close();
   };
 
@@ -73,6 +83,27 @@ const Popup = () => {
     const bookmark = new Bookmark();
     await bookmark.clear();
     window.close();
+  };
+
+  const summarize = () => {
+    summaryButton.current!.disabled = true;
+    summaryButton.current!.textContent = 'Summarizing...';
+    fetch('https://tabasco-server.kurichi.workers.dev/api/v1/summary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: titleInput.current!.value,
+        text: textToSummarize,
+      }),
+    }).then(async (res) => {
+      const json = await res.json();
+      summarizedText = json.text;
+      summaryElement.current!.textContent = summarizedText;
+      summaryButton.current!.disabled = false;
+      summaryButton.current!.textContent = '要約';
+    });
   };
 
   return (
@@ -114,13 +145,22 @@ const Popup = () => {
             追加
           </button>
         </div>
-        {/* <button
-            ref={clearBookmarkButton}
-            className='pointer-events-auto my-5 block cursor-pointer rounded-lg bg-gray-200 px-5 py-2'
-            id='storage-clear-button'
-          >
-            clear
-          </button> */}
+        <button
+          ref={clearBookmarkButton}
+          className='pointer-events-auto my-5 block cursor-pointer rounded-lg bg-gray-200 px-5 py-2'
+          id='storage-clear-button'
+        >
+          clear
+        </button>
+        {/* TODO: Pending, Design*/}
+        <button
+          ref={summaryButton}
+          className='pointer-events-auto my-5 block cursor-pointer rounded-lg bg-gray-200 px-5 py-2'
+          id='storage-clear-button'
+        >
+          要約
+        </button>
+        <div ref={summaryElement} />
       </div>
     </>
   );
