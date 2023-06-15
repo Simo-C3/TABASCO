@@ -60,6 +60,7 @@ const Sidebar = () => {
         className={`absolute right-0 top-0 z-50 h-full w-[350px] bg-white px-10 py-20 text-gray-700 ${
           sidebarStatus ? '-translate-x-0' : 'translate-x-[350px]'
         }`}
+        style={{ transition: 'transform 0.5s ease-in-out 0s' }}
       >
         <span>Hello World</span>
         {bookmarks && <AccordionMenu contents={bookmarks} />}
