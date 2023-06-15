@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 
 type Props = {

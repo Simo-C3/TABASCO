@@ -1,5 +1,4 @@
 import React from 'react';
-import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 
 type Props = {
   title: string;

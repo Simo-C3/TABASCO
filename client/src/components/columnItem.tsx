@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bookmarks } from '../types';
 import { MdChevronRight } from 'react-icons/md';
 
 import BaseFolder from './BaseFolder';
 import BaseLink from './BaseLink';
+import { Bookmarks } from '../types';
 
 type Props = {
   index: number;
