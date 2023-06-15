@@ -37,13 +37,13 @@ const Summary = ({ onChange }: PropsType) => {
 
   useEffect(() => {
     isEnabledRef.current?.addEventListener('change', handleChangeIsEnabled);
-    formatRef.current?.addEventListener('change', handleChangeFormat);
-    languageRef.current?.addEventListener('change', handleChangeLanguage);
+    // formatRef.current?.addEventListener('change', handleChangeFormat);
+    // languageRef.current?.addEventListener('change', handleChangeLanguage);
 
     return () => {
       isEnabledRef.current?.removeEventListener('change', handleChangeIsEnabled);
-      formatRef.current?.removeEventListener('change', handleChangeFormat);
-      languageRef.current?.removeEventListener('change', handleChangeLanguage);
+      // formatRef.current?.removeEventListener('change', handleChangeFormat);
+      // languageRef.current?.removeEventListener('change', handleChangeLanguage);
     };
   }, []);
 
@@ -53,7 +53,7 @@ const Summary = ({ onChange }: PropsType) => {
         <input ref={isEnabledRef} id='summary-input' type='checkbox' className='mx-3' />
         <span>要約</span>
       </div>
-      <div ref={configRef} className='my-1 hidden pl-14 text-sm'>
+      {/* <div ref={configRef} className='my-1 hidden pl-14 text-sm'>
         <div className='mb-2 flex items-center justify-between'>
           <span>フォーマット</span>
           <select ref={formatRef} name='format' id='summary-format-select'>
@@ -68,7 +68,7 @@ const Summary = ({ onChange }: PropsType) => {
             <option value='en'>英語</option>
           </select>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
