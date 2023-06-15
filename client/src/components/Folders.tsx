@@ -28,9 +28,9 @@ const Folders = ({ folders, onSelected }: FoldersPropsType) => {
     renderFolders(folders);
 
     if (folders.length === 0) {
-      ReactDOM.render(<BaseFolder title='' icon='' size='lg' />, selectedFolder.current);
+      ReactDOM.render(<BaseFolder id={0} title='' icon='' size='lg' />, selectedFolder.current);
     } else {
-      ReactDOM.render(<BaseFolder title={folders[0].title} icon={folders[0].icon} size='lg' />, selectedFolder.current);
+      ReactDOM.render(<BaseFolder id={folders[0].id} title={folders[0].title} icon={folders[0].icon} size='lg' />, selectedFolder.current);
     }
 
     selectedFolderContainer.current?.addEventListener('click', openFolderToggle);
@@ -86,7 +86,7 @@ const Folders = ({ folders, onSelected }: FoldersPropsType) => {
       icon: icon,
     });
 
-    ReactDOM.render(<BaseFolder title={title} icon={icon} size='lg' />, selectedFolder.current);
+    ReactDOM.render(<BaseFolder id={id} title={title} icon={icon} size='lg' />, selectedFolder.current);
     onSelected(id);
     const folders = await bookmark.getFolders();
     renderFolders(folders);
@@ -107,12 +107,12 @@ const Folders = ({ folders, onSelected }: FoldersPropsType) => {
     for (const folder of folders) {
       const child = document.createElement('div');
       const clickEvent = () => {
-        ReactDOM.render(<BaseFolder title={folder.title} icon={folder.icon} size='lg' />, selectedFolder.current);
+        ReactDOM.render(<BaseFolder id={folder.id} title={folder.title} icon={folder.icon} size='lg' />, selectedFolder.current);
         onSelected(folder.id);
       };
       child.addEventListener('click', clickEvent);
       childEventListeners.set(child, clickEvent);
-      ReactDOM.render(<BaseFolder title={folder.title} icon={folder.icon} />, child);
+      ReactDOM.render(<BaseFolder id={folder.id} title={folder.title} icon={folder.icon} />, child);
       folderElement.current?.appendChild(child);
     }
   };

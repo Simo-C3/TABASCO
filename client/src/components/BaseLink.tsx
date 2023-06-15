@@ -1,31 +1,18 @@
-import React, { RefObject } from 'react';
+import React from 'react';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 
 type Props = {
-  id: number;
-  columnId?: number;
   title: string;
   icon?: string;
   width?: string;
   size?: 'sm' | 'base' | 'lg';
   status?: 'open' | 'close';
   pointer?: boolean;
-  folderElement?: RefObject<HTMLDivElement>;
   className?: string;
+  link?: string;
 };
 
-const BaseFolder = (props: Props) => {
-  const switchFolderStatus = () => {
-    switch (props.status) {
-      case 'open':
-        return <MdExpandMore className='h-5 w-5' />;
-      case 'close':
-        return <MdChevronRight className='h-5 w-5' />;
-      default:
-        return;
-    }
-  };
-
+const BaseLink = (props: Props) => {
   const imgSizeHandler = () => {
     switch (props.size) {
       case 'sm':
@@ -53,17 +40,11 @@ const BaseFolder = (props: Props) => {
   };
 
   return (
-    <div
-      ref={props.folderElement}
-      id={typeof props.columnId === 'number' ? `${props.columnId}-folder-${props.id}` : `folder-${props.id}`}
-      title={props.title}
-      className={`flex items-center overflow-hidden ${props.className}`}
-    >
-      {switchFolderStatus()}
+    <a href={props.link} target='_blank' title={props.title} className={`flex items-center overflow-hidden ${props.className}`}>
       <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
       <span className={`select-none whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
-    </div>
+    </a>
   );
 };
 
-export default BaseFolder;
+export default BaseLink;
