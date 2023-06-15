@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
+// twind
+import { twind, cssom, observe } from '@twind/core';
+import 'construct-style-sheets-polyfill';
+import config from './twind.config';
 
 import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
@@ -60,8 +65,16 @@ const Sidebar = () => {
   );
 };
 
+const sheet = cssom(new CSSStyleSheet());
+const tw = twind(config, sheet);
+
 const root: HTMLDivElement = document.createElement('div');
 root.id = 'tabasco-side-bar';
 root.classList.add('inactive');
+const shadowRoot = root.attachShadow({ mode: 'open' });
+root.style.lineHeight = '18px';
+shadowRoot.adoptedStyleSheets = [sheet.target];
+observe(tw, shadowRoot);
+const shadow = createRoot(shadowRoot);
 document.body.appendChild(root);
-ReactDOM.render(<Sidebar />, root);
+shadow.render(<Sidebar />);
