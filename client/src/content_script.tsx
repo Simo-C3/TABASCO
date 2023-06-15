@@ -35,6 +35,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     const bookmark = new Bookmark();
+    (async () => setBookmarks(await bookmark.getBookmarkTree()))();
     const unsubscribe = bookmark.onChanged<Bookmarks>('tree', (newBookmarks) => {
       setBookmarks(newBookmarks);
     });
