@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import type { Bookmarks } from '../types';
 import { RootId } from '../config';
 import { Page } from './page';
+import { MdFolderOpen } from 'react-icons/md';
+import { MdMoreVert } from 'react-icons/md';
+import { Bookmark } from '../helper/storage';
+import BaseFolder from './BaseFolder';
 
 type PropsType = {
   contents: Bookmarks;
@@ -10,6 +14,7 @@ type PropsType = {
 export const AccordionMenu = ({ contents }: PropsType) => {
   const [isOpen, setIsOpen] = useState(false);
   const isRoot = contents.id === RootId;
+  const [menuStatus, setMenuStatus] = useState(false);
 
   const handleClick = () => {
     setIsOpen((prev) => !prev);
@@ -27,18 +32,53 @@ export const AccordionMenu = ({ contents }: PropsType) => {
         })}
       </div>
     );
+    ('');
   };
 
   if (isRoot) {
     return <SetArticle />;
   }
 
+  //フォルダの削除
+  const pullDownClick = () => {
+    setMenuStatus((prev) => !prev);
+  };
+  const folderDelete = async () => {
+    const bookmark = new Bookmark();
+    await bookmark.delete(contents.id);
+  };
+
   return (
     <>
-      <button onClick={handleClick} className=' border-0 border-solid border-gray-300 bg-gray-200 text-lg'>
-        <span className={isOpen ? 'isOpen' : 'isClose'}>{contents.title}</span>
-      </button>
-      {isOpen && <SetArticle />}
+      <div>
+        <div className='relative flex w-full justify-between'>
+          <div onClick={handleClick}>
+            <BaseFolder id={contents.id} title={contents.title} />
+          </div>
+          {/* <div className='text-left'>
+            <MdFolderOpen className='align-middle' />
+          </div>
+          <div className='flex '>
+            <button
+              onClick={handleClick}
+              className=' flex h-[20px] w-[200px] items-center border-[0px]  border-solid bg-white pl-[4px] text-[18px]  text-black hover:bg-blue-100 hover:text-black'
+            >
+              <span className=' leading-none'>{contents.title}</span>
+            </button>
+          </div> */}
+          <div>
+            <MdMoreVert onClick={pullDownClick} />
+          </div>
+          {menuStatus ? (
+            <div className='absolute  right-[0px] top-[20px] bg-white shadow-lg'>
+              <div onClick={folderDelete}>
+                <span>削除する</span>
+              </div>
+            </div>
+          ) : null}
+        </div>
+        {isOpen && <SetArticle />}
+      </div>
     </>
   );
 };
