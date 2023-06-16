@@ -4,7 +4,11 @@ import ColumnItem from './columnItem';
 import { Bookmark } from '../helper/storage';
 import { Bookmarks } from '../types';
 
-const Column = () => {
+type Props = {
+  updateBookmarks: () => Promise<void>;
+};
+
+const Column = (props: Props) => {
   const [openFolders, setOpenFolders] = useState<Bookmarks[]>([]);
   const [focusColumnIndex, setFocusColumnIndex] = useState<number>(0);
 
@@ -64,6 +68,7 @@ const Column = () => {
               setFocusColumnIndex(index);
             }}
             openFolder={openFolder}
+            updateBookmarks={props.updateBookmarks}
           />
         );
       })}

@@ -5,6 +5,7 @@ import BaseFolder from './BaseFolder';
 import BaseLink from './BaseLink';
 import { Bookmarks } from '../types';
 import { Bookmark } from '../helper/storage';
+import ColumnFolder from './ColumnFolder';
 
 type Props = {
   index: number;
@@ -15,6 +16,7 @@ type Props = {
   className?: string;
   onClick?: MouseEventHandler<HTMLDivElement> | undefined;
   openFolder: (folderId: number, columnIndex: number) => void;
+  updateBookmarks: () => Promise<void>;
 };
 
 const ColumnItem = memo((props: Props) => {
@@ -54,12 +56,9 @@ const ColumnItem = memo((props: Props) => {
     setShowNewFolderTitleContainer(false);
   };
 
-  const onWindowClickEventHandler = (event: KeyboardEvent) => {
-    console.log(event.key);
-    console.log(document.activeElement === newFolderTitleInput.current);
-    console.log(newFolderTitleInput.current?.value);
+  const onWindowClickEventHandler = async (event: KeyboardEvent) => {
     if (document.activeElement === newFolderTitleInput.current && newFolderTitleInput.current?.value !== '' && event.key === 'Enter') {
-      AddNewFolder();
+      await AddNewFolder();
     }
   };
 
@@ -95,11 +94,12 @@ const ColumnItem = memo((props: Props) => {
     setNewFolderTitle(event.target.value);
   };
 
-  const AddNewFolder = () => {
+  const AddNewFolder = async () => {
     const bookmark: Bookmark = new Bookmark();
-    bookmark.create({ title: newFolderTitleInput.current?.value!, parentId: props.parentId });
+    await bookmark.create({ title: newFolderTitleInput.current?.value!, parentId: props.parentId });
     newFolderTitleInput.current!.value = '';
     setShowNewFolderTitleContainer(false);
+    props.updateBookmarks();
   };
 
   return (
@@ -136,19 +136,13 @@ const ColumnItem = memo((props: Props) => {
           {/* フォルダの表示 */}
           {folders.map((item: Bookmarks, index: number) => {
             return (
-              <BaseFolder
+              <ColumnFolder
                 key={index}
-                id={item.id}
-                status='close'
-                title={item.title}
-                icon={item.icon}
-                size='lg'
-                className={`my-1 cursor-pointer rounded-md px-1 py-1 hover:bg-red-100 ${
-                  item.id === props.openFolderId ? 'bg-red-100' : ''
-                }`}
-                onClick={() => {
-                  props.openFolder(item.id, props.index);
-                }}
+                index={index}
+                openFolderId={props.openFolderId}
+                item={item}
+                columnIndex={props.index}
+                openFolder={props.openFolder}
               />
             );
           })}

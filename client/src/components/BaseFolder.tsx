@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { MdChevronRight, MdExpandMore } from 'react-icons/md';
+import { MdChevronRight, MdExpandMore, MdFolderOpen } from 'react-icons/md';
 
 type Props = {
   id: number;
@@ -26,9 +26,9 @@ const BaseFolder = (props: Props) => {
   const switchFolderStatus = () => {
     switch (props.status) {
       case 'open':
-        return <MdExpandMore className='h-5 w-5' />;
+        return <MdExpandMore className='h-5 w-5 flex-shrink-0' />;
       case 'close':
-        return <MdChevronRight className='h-5 w-5' />;
+        return <MdChevronRight className='h-5 w-5 flex-shrink-0' />;
       default:
         return;
     }
@@ -63,9 +63,9 @@ const BaseFolder = (props: Props) => {
   return (
     <div ref={ref} title={props.title} className={`flex items-center overflow-hidden ${props.className}`}>
       {switchFolderStatus()}
-      <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
+      <MdFolderOpen className={`mx-1 flex-shrink-0 select-none ${imgSizeHandler()}`} />
 
-      <span className={`select-none whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
+      <span className={`select-none overflow-hidden text-ellipsis whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
     </div>
   );
 };
