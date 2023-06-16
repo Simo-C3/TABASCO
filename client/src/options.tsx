@@ -24,8 +24,6 @@ const apiShareRequest = async (id: string): Promise<Share> => {
 };
 
 const Options = () => {
-  const sidebar = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     getShare();
   }, []);
@@ -54,7 +52,7 @@ const Options = () => {
     <div className='h-screen w-screen'>
       <div id='option-header' className='z-50 h-16 w-full border border-gray-100 bg-white'></div>
       <div className='flex h-[calc(100vh-4rem)] w-full'>
-        <div id='option-sidebar' className='bottom-0 left-0 z-20 h-full w-16 bg-green-100' ref={sidebar}></div>
+        <div id='option-sidebar' className='bottom-0 left-0 z-20 h-full w-16 bg-green-100'></div>
         <div id='option-content' className='h-full w-[calc(100vw-4rem)] overflow-x-auto overflow-y-hidden bg-white'>
           <Column />
         </div>
