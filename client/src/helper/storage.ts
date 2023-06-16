@@ -148,4 +148,12 @@ export class Bookmark {
       chrome.storage.onChanged.removeListener(listener);
     };
   }
+
+  async getFullPathWithId(id: BookmarkID): Promise<Array<BookmarkID>> {
+    const bookmarks = await this.load();
+    const target = bookmarks.find((o) => o.id === id);
+    if (target === undefined) return [];
+    const result = await this.getFullPathWithId(target.parentId);
+    return [...result, id];
+  }
 }
