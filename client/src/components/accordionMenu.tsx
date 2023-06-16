@@ -26,7 +26,6 @@ export const AccordionMenu = React.memo(({ contents }: PropsType) => {
   }, [menuStatus]);
 
   const folderDelete = useCallback(async () => {
-    // const bookmark = new Bookmark();
     await bookmark.delete(contents.id);
   }, [contents.id]);
 

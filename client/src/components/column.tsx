@@ -4,7 +4,12 @@ import ColumnItem from './columnItem';
 import { Bookmark } from '../helper/storage';
 import { Bookmarks } from '../types';
 
-const Column = () => {
+type Props = {
+  updateBookmarks: () => Promise<void>;
+  fullPathWithId: number[];
+};
+
+const Column = (props: Props) => {
   const [openFolders, setOpenFolders] = useState<Bookmarks[]>([]);
   const [focusColumnIndex, setFocusColumnIndex] = useState<number>(0);
 
@@ -13,9 +18,69 @@ const Column = () => {
       const bookmark = new Bookmark();
       const folderTree = await bookmark.getBookmarkTree();
       setOpenFolders([folderTree]);
+      bookmark.onChanged<Bookmarks>('tree', (changeInfo: Bookmarks) => {
+        setOpenFolders((prev) => {
+          const newOpenFolders: Bookmarks[] = [];
+          var newFolders: Bookmarks[] = [changeInfo];
+          prev.forEach((folder) => {
+            newFolders.forEach((newFolder) => {
+              if (folder.id === newFolder.id) {
+                newOpenFolders.push(newFolder);
+                newFolders = newFolder.children!;
+              }
+            });
+          });
+          return [...newOpenFolders];
+        });
+      });
     };
     f();
   }, []);
+
+  useEffect(() => {
+    const optionContent = document.getElementById('option-content');
+    if (optionContent) {
+      optionContent.scrollLeft = optionContent.scrollWidth;
+    }
+  });
+
+  useEffect(() => {
+    console.log('fullPathWithId update open folders');
+    const f = async () => {
+      const bookmark = new Bookmark();
+      const folderTree = await bookmark.getBookmarkTree();
+      var newOpenFolder: Bookmarks[] = [folderTree];
+      const newOpenFolders: Bookmarks[] = [];
+      console.log(props.fullPathWithId);
+      const newFullPath = [0, ...props.fullPathWithId];
+      newFullPath.forEach((folderId, index) => {
+        newOpenFolder.forEach((folder) => {
+          if (folder.id === folderId) {
+            newOpenFolders.push(folder);
+            newOpenFolder = folder.children!;
+          }
+        });
+      });
+
+      console.log('newOpenFolders', newOpenFolders);
+      setOpenFolders(newOpenFolders);
+    };
+    f();
+  }, [props.fullPathWithId]);
+
+  useEffect(() => {
+    console.log(openFolders);
+  }, [openFolders]);
+
+  const openFolder = (folderId: number, columnIndex: number) => {
+    if (openFolders[columnIndex].children) {
+      const newOpenFolder = openFolders[columnIndex].children?.find((folder) => {
+        return folder.id === folderId;
+      })!;
+      const parentFolders = openFolders.slice(0, columnIndex + 1);
+      setOpenFolders([...parentFolders, newOpenFolder]);
+    }
+  };
 
   return (
     <div className='flex h-full w-fit min-w-full'>
@@ -24,17 +89,15 @@ const Column = () => {
           <ColumnItem
             key={index}
             index={index}
+            parentId={folder.id}
             isFocus={index === focusColumnIndex}
             openFolderId={index + 1 < openFolders.length ? openFolders[index + 1].id : -1}
             folderItems={folder.children!}
             onClick={() => {
               setFocusColumnIndex(index);
             }}
-            openFolder={(folderId) => {
-              const newOpenFolder = folder.children?.find((folder) => folder.id === folderId)!;
-              const parentFolders = openFolders.slice(0, index + 1);
-              setOpenFolders([...parentFolders, newOpenFolder]);
-            }}
+            openFolder={openFolder}
+            updateBookmarks={props.updateBookmarks}
           />
         );
       })}
