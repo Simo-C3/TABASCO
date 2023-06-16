@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MdFullscreen } from 'react-icons/md';
 
@@ -9,14 +9,12 @@ import config from './twind.config';
 
 import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
-import { Bookmark } from './helper/storage';
-import type { Bookmarks } from './types';
 import { IconContext } from 'react-icons/lib';
+import { BookmarkProvider, useBookmark } from './context/bookmark';
 
 const Sidebar = () => {
+  const { bookmark } = useBookmark();
   const [sidebarStatus, setSidebarStatus] = useState(false);
-  const [bookmarks, setBookmarks] = useState<Bookmarks>();
-  const [count, setCount] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
@@ -36,18 +34,6 @@ const Sidebar = () => {
       sideBarElement?.classList.add('inactive');
     }
   });
-
-  useEffect(() => {
-    const bookmark = new Bookmark();
-    (async () => setBookmarks(await bookmark.getBookmarkTree()))();
-    const unsubscribe = bookmark.onChanged<Bookmarks>('tree', (newBookmarks) => {
-      setBookmarks(newBookmarks);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -77,7 +63,7 @@ const Sidebar = () => {
         <div className='mb-[25px] flex justify-center'>
           <h1 className='  text-[26px] font-bold'>TABASCO!!!</h1>
         </div>
-        {bookmarks && <AccordionMenu contents={bookmarks} />}
+        <AccordionMenu contents={bookmark.tree()} />
       </div>
     </>
   );
@@ -95,4 +81,8 @@ shadowRoot.adoptedStyleSheets = [sheet.target];
 observe(tw, shadowRoot);
 const shadow = createRoot(shadowRoot);
 document.body.appendChild(root);
-shadow.render(<Sidebar />);
+shadow.render(
+  <BookmarkProvider>
+    <Sidebar />
+  </BookmarkProvider>,
+);
