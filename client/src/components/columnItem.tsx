@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { MdChevronRight } from 'react-icons/md';
+import { MdChevronRight, MdFolderOpen } from 'react-icons/md';
 
 import BaseFolder from './BaseFolder';
 import BaseLink from './BaseLink';
@@ -12,7 +12,7 @@ type Props = {
   folderItems: Bookmarks[];
   className?: string;
   onClick?: (e: MouseEvent) => void;
-  openFolder: (folderId: number) => void;
+  openFolder: (folderId: number, columnIndex: number) => void;
 };
 
 const ColumnItem = (props: Props) => {
@@ -90,60 +90,73 @@ const ColumnItem = (props: Props) => {
       <div
         key={props.index}
         ref={leftFrame}
-        className={`relative h-full w-[320px] overflow-y-auto overflow-x-hidden bg-white px-3 ${
-          props.isFocus ? '3px solid rgb(255, 246, 246) pb-6 pt-3' : 'py-3'
-        } ${props.className}`}
+        className={`relative h-full w-[320px] overflow-hidden bg-white px-2 pb-0 pt-2 ${props.className}`}
+        style={
+          props.isFocus
+            ? { border: '2px solid rgb(243, 244, 246)' }
+            : { border: '2px solid white', borderRight: '1px solid rgb(243, 244, 246)' }
+        }
       >
-        {/* 新しいファイルの名前入力 */}
-        <div ref={newFolderTitleContainer} className='hidden'>
-          <div className='my-2 flex w-full items-center px-1'>
-            <MdChevronRight className='h-5 w-5' />
-            <input ref={newFolderTitleInput} className='mx-1 w-[calc(100%-1.25rem)] rounded-lg bg-gray-100 px-2 py-1' />
+        <div className={`column-item-scroll h-full overflow-y-auto overflow-x-hidden px-1 ${props.isFocus ? 'pb-16' : 'pb-6'}`}>
+          {/* 新しいファイルの名前入力 */}
+          <div ref={newFolderTitleContainer} className='hidden'>
+            <div className='my-2 flex w-full items-center px-1'>
+              <MdChevronRight className='h-5 w-5' />
+              <MdFolderOpen className='ml-1 mr-2 h-5 w-5' />
+              <input
+                ref={newFolderTitleInput}
+                className='mx-1 w-[calc(100%-3.25rem)] rounded-lg border-none bg-gray-100 px-2 py-1 outline-none'
+              />
+            </div>
           </div>
+          {/* フォルダの表示 */}
+          {folders.map((item: Bookmarks, index: number) => {
+            return (
+              <BaseFolder
+                key={index}
+                id={item.id}
+                status='close'
+                title={item.title}
+                icon={item.icon}
+                size='lg'
+                className={`my-1 cursor-pointer rounded-md px-1 py-1 hover:bg-red-100 ${
+                  item.id === props.openFolderId ? 'bg-red-100' : ''
+                }`}
+                onClick={() => {
+                  props.openFolder(item.id, index);
+                }}
+              />
+            );
+          })}
+          {/* ページの表示 */}
+          {pages.map((item: Bookmarks, index: number) => {
+            return (
+              <BaseLink
+                key={index}
+                title={item.title}
+                link={item.url}
+                icon={item.icon}
+                size='lg'
+                className='my-1 rounded-md px-1 py-1 pl-6 pr-1 hover:bg-green-100'
+              />
+            );
+          })}
         </div>
-        {/* フォルダの表示 */}
-        {folders.map((item: Bookmarks, index: number) => {
-          return (
-            <BaseFolder
-              key={index}
-              id={item.id}
-              status='close'
-              title={item.title}
-              icon={item.icon}
-              size='lg'
-              className={`my-1 cursor-pointer rounded-md px-1 py-1 hover:bg-red-100 ${item.id === props.openFolderId ? 'bg-red-100' : ''}`}
-              onClick={() => {
-                props.openFolder(item.id);
-              }}
-            />
-          );
-        })}
-        {/* ページの表示 */}
-        {pages.map((item: Bookmarks, index: number) => {
-          return (
-            <BaseLink
-              key={index}
-              title={item.title}
-              link={item.url}
-              icon={item.icon}
-              size='lg'
-              className='my-1 rounded-md px-1 py-1 pl-6 pr-1 hover:bg-red-100'
-            />
-          );
-        })}
         <div
           id={`splitter-${props.index}`}
           key={props.index}
           ref={splitter}
-          className='absolute right-0 top-0 h-full w-[6px] cursor-col-resize bg-gray-500'
+          className='absolute right-0 top-0 h-full w-[6px] cursor-col-resize bg-white'
         />
         {props.isFocus ? (
-          <div
-            ref={newFolderButton}
-            id='new-folder-element'
-            className='sticky bottom-1 left-1/2 m-0 w-32 -translate-x-1/2 cursor-pointer select-none rounded-lg bg-white px-3 py-1 text-center drop-shadow-md'
-          >
-            新しいフォルダ
+          <div className='absolute  bottom-4 left-1/2 w-full  -translate-x-1/2 py-3'>
+            <div
+              ref={newFolderButton}
+              id='new-folder-element'
+              className='mx-auto my-0 w-32 cursor-pointer select-none rounded-lg bg-white px-3 py-1 text-center drop-shadow-md'
+            >
+              新しいフォルダ
+            </div>
           </div>
         ) : null}
       </div>

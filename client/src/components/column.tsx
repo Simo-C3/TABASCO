@@ -17,6 +17,16 @@ const Column = () => {
     f();
   }, []);
 
+  const openFolder = (folderId: number, columnIndex: number) => {
+    const newOpenFolder = openFolders[columnIndex].children?.find((folder) => folder.id === folderId)!;
+    const parentFolders = openFolders.slice(0, columnIndex + 1);
+    setOpenFolders([...parentFolders, newOpenFolder]);
+    const optionContent = document.getElementById('option-content');
+    if (optionContent) {
+      optionContent.scrollLeft = optionContent.scrollWidth;
+    }
+  };
+
   return (
     <div className='flex h-full w-fit min-w-full'>
       {openFolders.map((folder, index) => {
@@ -30,11 +40,7 @@ const Column = () => {
             onClick={() => {
               setFocusColumnIndex(index);
             }}
-            openFolder={(folderId) => {
-              const newOpenFolder = folder.children?.find((folder) => folder.id === folderId)!;
-              const parentFolders = openFolders.slice(0, index + 1);
-              setOpenFolders([...parentFolders, newOpenFolder]);
-            }}
+            openFolder={openFolder}
           />
         );
       })}
