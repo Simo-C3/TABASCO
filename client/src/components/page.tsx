@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { BookmarkID, Bookmarks } from '../types';
 import BaseFolder from './BaseFolder';
 import { MdDeleteForever } from 'react-icons/md';
@@ -9,11 +9,7 @@ type PropsType = {
   contents: Bookmarks;
 };
 
-export const Page = ({ contents }: PropsType) => {
-  const openPage = () => {
-    window.open(contents.url);
-  };
-
+export const Page = React.memo(({ contents }: PropsType) => {
   const deleteBookmark = async () => {
     const bookmark = new Bookmark();
     await bookmark.delete(contents.id);
@@ -21,8 +17,8 @@ export const Page = ({ contents }: PropsType) => {
 
   return (
     <div>
-      <div className='flex justify-between'>
-        <div className=' bg-white text-left  text-[16px] text-black hover:bg-blue-100 '>
+      <div className=' flex  justify-between '>
+        <div className='overflow-hidden bg-white text-left text-[16px] text-black hover:bg-blue-100'>
           <BaseLink title={contents.title} icon={contents.icon || ''} link={contents.url} />
         </div>
         <div className='flex justify-center'>
@@ -31,4 +27,4 @@ export const Page = ({ contents }: PropsType) => {
       </div>
     </div>
   );
-};
+});
