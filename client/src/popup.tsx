@@ -6,6 +6,7 @@ import { RootId } from './config';
 import Folders from './components/Folders';
 import Summary from './components/Summary';
 import { getTextByBody } from './helper/summary';
+import { createRoot } from 'react-dom/client';
 
 const Popup = () => {
   let url = '';
@@ -109,6 +110,13 @@ const Popup = () => {
   return (
     <>
       <div className='w-80 overflow-hidden rounded-xl px-3 py-3 text-gray-600'>
+        <div
+          onClick={() => {
+            console.log('hoge');
+          }}
+        >
+          hoge
+        </div>
         <div className='border-b border-solid border-gray-100 pb-3 text-sm'>
           <input id='tab-title-input' ref={titleInput} autoFocus className='w-full rounded-lg bg-gray-200 px-3 py-2' />
         </div>
@@ -166,4 +174,7 @@ const Popup = () => {
   );
 };
 
-ReactDOM.render(<Popup />, document.getElementById('root'));
+// ReactDOM.render(<Popup />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<Popup />);
