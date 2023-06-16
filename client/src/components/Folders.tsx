@@ -3,6 +3,7 @@ import type { Folder } from '../types';
 import { MdExpandMore } from 'react-icons/md';
 import BaseFolder from './BaseFolder';
 import { useBookmark } from '../context/bookmark';
+import { RootId } from '../config';
 
 type FoldersPropsType = {
   folders: Folder[];
@@ -16,18 +17,34 @@ const Folders = React.memo(({ folders, onSelected }: FoldersPropsType) => {
   const [currentFolder, setCurrentFolder] = useState<Folder | null>(null);
 
   const createNewFolder = async () => {
+    const bookmarks = bookmark.array();
+
+    const folderNames = newFolderTitle.split('/');
+    let parentId = RootId;
+    for (const folderName of folderNames) {
+      const folder = bookmarks.find((bookmark) => bookmark.title === folderName && bookmark.parentId === parentId);
+      if (!folder) {
+        const id = await bookmark.create({
+          title: folderName,
+          parentId,
+        });
+        parentId = id;
+      } else {
+        parentId = folder.id;
+      }
+    }
     const icon = '';
     const id = await bookmark.create({
       title: newFolderTitle,
       icon,
     });
 
-    onSelected(id);
+    onSelected(parentId);
     setNewFolderTitle('');
     setCurrentFolder({
-      id,
+      id: parentId,
       title: newFolderTitle,
-      icon,
+      icon: '',
     });
   };
 
