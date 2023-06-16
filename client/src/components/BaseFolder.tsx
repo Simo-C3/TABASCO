@@ -65,7 +65,7 @@ const BaseFolder = (props: Props) => {
       {switchFolderStatus()}
       <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
 
-      <span className={`select-none whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
+      <span className={`select-none overflow-hidden truncate whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
     </div>
   );
 };
