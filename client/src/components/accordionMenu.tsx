@@ -1,16 +1,17 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { Bookmarks } from '../types';
 import { RootId } from '../config';
 import { Page } from './page';
 import { MdMoreVert } from 'react-icons/md';
-import { Bookmark } from '../helper/storage';
 import BaseFolder from './BaseFolder';
+import { useBookmark } from '../context/bookmark';
 
 type PropsType = {
   contents: Bookmarks;
 };
 
 export const AccordionMenu = React.memo(({ contents }: PropsType) => {
+  const { bookmark } = useBookmark();
   const isRoot = contents.id === RootId;
   const [isOpen, setIsOpen] = useState(isRoot);
   const [menuStatus, setMenuStatus] = useState(false);
@@ -25,7 +26,6 @@ export const AccordionMenu = React.memo(({ contents }: PropsType) => {
   }, [menuStatus]);
 
   const folderDelete = useCallback(async () => {
-    const bookmark = new Bookmark();
     await bookmark.delete(contents.id);
   }, [contents.id]);
 

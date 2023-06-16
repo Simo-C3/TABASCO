@@ -9,14 +9,12 @@ import config from './twind.config';
 
 import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
-import { Bookmark } from './helper/storage';
-import type { Bookmarks } from './types';
 import { IconContext } from 'react-icons/lib';
+import { BookmarkProvider, useBookmark } from './context/bookmark';
 
 const Sidebar = () => {
+  const { bookmark } = useBookmark();
   const [sidebarStatus, setSidebarStatus] = useState(false);
-  const [bookmarks, setBookmarks] = useState<Bookmarks>();
-  const [count, setCount] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
@@ -37,18 +35,6 @@ const Sidebar = () => {
     }
   });
 
-  useEffect(() => {
-    const bookmark = new Bookmark();
-    (async () => setBookmarks(await bookmark.getBookmarkTree()))();
-    const unsubscribe = bookmark.onChanged<Bookmarks>('tree', (newBookmarks) => {
-      setBookmarks(newBookmarks);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -66,8 +52,13 @@ const Sidebar = () => {
         }`}
         style={{ transition: 'transform 0.5s ease-in-out 0s' }}
       >
-        <div className='absolute right-[15px]  top-[20px]' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <button className=' bg-white '>
+        <div className='absolute right-[15px] top-[20px]' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <button
+            className=' bg-white'
+            onClick={() => {
+              chrome.runtime.sendMessage({ message: 'openOptionsPage' });
+            }}
+          >
             <IconContext.Provider value={{ size: '20px', color: !isHovered ? '#c0c0c0' : '#696969' }}>
               <MdFullscreen className='' />
             </IconContext.Provider>
@@ -77,7 +68,7 @@ const Sidebar = () => {
         <div className='mb-[25px] flex justify-center'>
           <h1 className='  text-[26px] font-bold'>TABASCO!!!</h1>
         </div>
-        {bookmarks && <AccordionMenu contents={bookmarks} />}
+        <AccordionMenu contents={bookmark.tree()} />
       </div>
     </>
   );
@@ -95,4 +86,8 @@ shadowRoot.adoptedStyleSheets = [sheet.target];
 observe(tw, shadowRoot);
 const shadow = createRoot(shadowRoot);
 document.body.appendChild(root);
-shadow.render(<Sidebar />);
+shadow.render(
+  <BookmarkProvider>
+    <Sidebar />
+  </BookmarkProvider>,
+);

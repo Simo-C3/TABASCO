@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 #tabasco-side-bar {
-  @apply fixed right-0 top-0 z-[9999] h-full w-full;
+  @apply fixed right-0 top-0 z-[999999999999] h-full w-full;
 }
 
 #tabasco-side-bar::before {
