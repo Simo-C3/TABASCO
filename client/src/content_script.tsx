@@ -52,8 +52,13 @@ const Sidebar = () => {
         }`}
         style={{ transition: 'transform 0.5s ease-in-out 0s' }}
       >
-        <div className='absolute right-[15px]  top-[20px]' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <button className=' bg-white '>
+        <div className='absolute right-[15px] top-[20px]' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <button
+            className=' bg-white'
+            onClick={() => {
+              chrome.runtime.sendMessage({ message: 'openOptionsPage' });
+            }}
+          >
             <IconContext.Provider value={{ size: '20px', color: !isHovered ? '#c0c0c0' : '#696969' }}>
               <MdFullscreen className='' />
             </IconContext.Provider>
