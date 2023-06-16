@@ -1,17 +1,16 @@
-import React, { useEffect } from 'react';
-import type { BookmarkID, Bookmarks } from '../types';
-import BaseFolder from './BaseFolder';
+import React from 'react';
+import type { Bookmarks } from '../types';
 import { MdDeleteForever } from 'react-icons/md';
-import { Bookmark } from '../helper/storage';
 import BaseLink from './BaseLink';
+import { useBookmark } from '../context/bookmark';
 
 type PropsType = {
   contents: Bookmarks;
 };
 
 export const Page = React.memo(({ contents }: PropsType) => {
+  const { bookmark } = useBookmark();
   const deleteBookmark = async () => {
-    const bookmark = new Bookmark();
     await bookmark.delete(contents.id);
   };
 
