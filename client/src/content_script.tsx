@@ -19,6 +19,7 @@ const Sidebar = () => {
   window.addEventListener('mousemove', (e: MouseEvent) => {
     const sideBarElement = document.getElementById('tabasco-side-bar');
     const sideBarContentElement = sideBarElement?.shadowRoot;
+
     if (!sidebarStatus && window.innerWidth - e.clientX < 10) {
       setSidebarStatus(true);
       sideBarElement?.classList.remove('inactive');

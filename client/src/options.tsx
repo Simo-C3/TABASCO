@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { Bookmark } from './helper/storage';
@@ -24,10 +24,7 @@ const apiShareRequest = async (id: string): Promise<Share> => {
 };
 
 const Options = () => {
-  const column = useRef<HTMLDivElement>(null);
-
-  const [result, setResult] = useState<Share>();
-  const bookmark = new Bookmark();
+  const sidebar = useRef<HTMLDivElement>(null);
 
   const sidebar = useRef<HTMLDivElement>(null);
 
@@ -36,11 +33,15 @@ const Options = () => {
   };
 
   useEffect(() => {
+    getShare();
+  }, []);
+
+  const getShare = () => {
     const url = window.location.href;
     const id = getQueryParam(url, 'id');
     if (id) {
       apiShareRequest(id).then(async (result) => {
-        setResult(result);
+        const bookmark = new Bookmark();
         const groupId = await bookmark.create({
           title: result.title,
         });
@@ -53,16 +54,16 @@ const Options = () => {
         }
       });
     }
-
-    ReactDOM.render(<Column rerendering={rerendering} />, column.current!);
-  }, []);
+  };
 
   return (
     <div className='h-screen w-screen'>
       <div id='option-header' className='z-50 h-16 w-full border border-gray-100 bg-white'></div>
       <div className='flex h-[calc(100vh-4rem)] w-full'>
         <div id='option-sidebar' className='bottom-0 left-0 z-20 h-full w-16 bg-green-100' ref={sidebar}></div>
-        <div id='option-content' ref={column} className='h-full w-[calc(100vw-4rem)] overflow-x-auto overflow-y-hidden bg-white' />
+        <div id='option-content' className='h-full w-[calc(100vw-4rem)] overflow-x-auto overflow-y-hidden bg-white'>
+          <Column />
+        </div>
       </div>
     </div>
   );
