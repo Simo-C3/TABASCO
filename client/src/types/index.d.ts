@@ -31,6 +31,16 @@ export type Bookmarks = {
   children?: Bookmarks[];
 };
 
+export type BookmarkTree = {
+  id: BookmarkID;
+  type: BookmarkType;
+  title: string;
+  icon?: string;
+  url?: string;
+  summary?: string;
+  children?: Bookmarks[];
+};
+
 export type SidebarBucket = {
   bookmarks: BaseBookmark[];
 };
@@ -38,5 +48,5 @@ export type SidebarBucket = {
 export type Folder = {
   id: BookmarkID;
   title: string;
-  icon: string;
+  icon?: string;
 };

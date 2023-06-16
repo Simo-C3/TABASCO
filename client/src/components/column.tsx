@@ -6,6 +6,7 @@ import { Bookmarks } from '../types';
 
 type Props = {
   updateBookmarks: () => Promise<void>;
+  fullPathWithId: number[];
 };
 
 const Column = (props: Props) => {
@@ -42,6 +43,34 @@ const Column = (props: Props) => {
       optionContent.scrollLeft = optionContent.scrollWidth;
     }
   });
+
+  useEffect(() => {
+    console.log('fullPathWithId update open folders');
+    const f = async () => {
+      const bookmark = new Bookmark();
+      const folderTree = await bookmark.getBookmarkTree();
+      var newOpenFolder: Bookmarks[] = [folderTree];
+      const newOpenFolders: Bookmarks[] = [];
+      console.log(props.fullPathWithId);
+      const newFullPath = [0, ...props.fullPathWithId];
+      newFullPath.forEach((folderId, index) => {
+        newOpenFolder.forEach((folder) => {
+          if (folder.id === folderId) {
+            newOpenFolders.push(folder);
+            newOpenFolder = folder.children!;
+          }
+        });
+      });
+
+      console.log('newOpenFolders', newOpenFolders);
+      setOpenFolders(newOpenFolders);
+    };
+    f();
+  }, [props.fullPathWithId]);
+
+  useEffect(() => {
+    console.log(openFolders);
+  }, [openFolders]);
 
   const openFolder = (folderId: number, columnIndex: number) => {
     if (openFolders[columnIndex].children) {

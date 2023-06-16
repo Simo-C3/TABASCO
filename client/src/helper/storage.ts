@@ -22,7 +22,6 @@ export class Bookmark {
 
   async one(id: BookmarkID): Promise<BaseBookmark | undefined> {
     const bookmarks = await this.load();
-    console.log(bookmarks);
 
     const target = bookmarks.find((o) => o.id === id);
     console.log(target);
@@ -86,16 +85,20 @@ export class Bookmark {
 
   async getFolders(): Promise<Folder[]> {
     const bookmarks = await this.load();
-    return bookmarks.filter((o) => o.url === undefined || o.url === '').map((o) => ({ id: o.id, title: o.title, icon: o.icon! }));
+    const results = bookmarks
+      .filter((o) => o.url === undefined || o.url === '')
+      .map(async (o) => ({ id: o.id, title: await this.getFullPath(o), icon: o.icon! }));
+    return await Promise.all(results);
   }
 
   async getFullPath(bookmark: BaseBookmark): Promise<string> {
+    const bookmarks = await this.load();
     let fullPath = bookmark.title;
-    let parent = await this.one(bookmark.parentId);
+    let parent = bookmarks.find((o) => o.id === bookmark.parentId);
 
     while (parent) {
       fullPath = `${parent.title}/${fullPath}`;
-      parent = await this.one(parent.parentId);
+      parent = bookmarks.find((o) => o.id === parent!.parentId)!;
     }
 
     return fullPath;
@@ -147,5 +150,13 @@ export class Bookmark {
     return () => {
       chrome.storage.onChanged.removeListener(listener);
     };
+  }
+
+  async getFullPathWithId(id: BookmarkID): Promise<Array<BookmarkID>> {
+    const bookmarks = await this.load();
+    const target = bookmarks.find((o) => o.id === id);
+    if (target === undefined) return [];
+    const result = await this.getFullPathWithId(target.parentId);
+    return [...result, id];
   }
 }

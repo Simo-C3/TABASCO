@@ -6,6 +6,7 @@ import { Bookmark } from './helper/storage';
 import Column from './components/column';
 import { BaseBookmark } from './types';
 import Header from './components/Header';
+import { BookmarkProvider } from './context/bookmark';
 
 const getQueryParam = (url: string, param: string): string | null => {
   const params = new URLSearchParams(new URL(url).search);
@@ -28,6 +29,7 @@ const apiShareRequest = async (id: string): Promise<Share> => {
 const Options = () => {
   const [bookmarks, setBookmarks] = useState<BaseBookmark[]>([]);
   const [searchResult, setSearchResult] = useState<BaseBookmark[]>([]);
+  const [fullPathWithId, setFullPathWithId] = useState<number[]>([]);
 
   useEffect(() => {
     const f = async () => {
@@ -53,6 +55,14 @@ const Options = () => {
     setSearchResult(searchResult);
   };
 
+  const searchBookmarkUpdate = async (folderId: number) => {
+    console.log('searchBookmarkUpdate', folderId);
+    const bookmark = new Bookmark();
+    bookmark.getFullPathWithId(folderId).then((result) => {
+      setFullPathWithId(result);
+    });
+  };
+
   const getShare = () => {
     const url = window.location.href;
     const id = getQueryParam(url, 'id');
@@ -75,12 +85,9 @@ const Options = () => {
 
   return (
     <div className='h-screen w-screen'>
-      <Header searchBookmark={searchBookmark} />
-      <div className='flex h-[calc(100vh-4rem)] w-full'>
-        <div id='option-sidebar' className='bottom-0 left-0 z-20 h-full w-16 bg-green-100'></div>
-        <div id='option-content' className='h-full w-[calc(100vw-4rem)] overflow-x-auto overflow-y-hidden bg-white'>
-          <Column updateBookmarks={updateBookmarks} />
-        </div>
+      <Header searchBookmark={searchBookmark} searchResult={searchResult} searchBookmarkUpdate={searchBookmarkUpdate} />
+      <div id='option-content' className='h-[calc(100vh-4rem)] w-[calc(100vw-4rem)] overflow-x-auto overflow-y-hidden bg-white'>
+        <Column updateBookmarks={updateBookmarks} fullPathWithId={fullPathWithId} />
       </div>
     </div>
   );
@@ -88,4 +95,8 @@ const Options = () => {
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
-root.render(<Options />);
+root.render(
+  <BookmarkProvider>
+    <Options />
+  </BookmarkProvider>,
+);

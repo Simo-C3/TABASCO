@@ -65,7 +65,7 @@ const BaseFolder = (props: Props) => {
       {switchFolderStatus()}
       <MdFolderOpen className={`mx-1 flex-shrink-0 select-none ${imgSizeHandler()}`} />
 
-      <span className={`select-none overflow-hidden text-ellipsis whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
+      <span className={`select-none truncate ${titleSizeHandler()}`}>{props.title}</span>
     </div>
   );
 };

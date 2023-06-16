@@ -98,6 +98,7 @@ const ColumnItem = memo((props: Props) => {
     const bookmark: Bookmark = new Bookmark();
     await bookmark.create({ title: newFolderTitleInput.current?.value!, parentId: props.parentId });
     newFolderTitleInput.current!.value = '';
+    setNewFolderTitle('');
     setShowNewFolderTitleContainer(false);
     props.updateBookmarks();
   };
@@ -139,6 +140,7 @@ const ColumnItem = memo((props: Props) => {
               <ColumnFolder
                 key={index}
                 index={index}
+                parentItemsNumber={folders.length}
                 openFolderId={props.openFolderId}
                 item={item}
                 columnIndex={props.index}

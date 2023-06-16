@@ -41,7 +41,7 @@ const BaseLink = (props: Props) => {
   return (
     <a href={props.link} target='_blank' title={props.title} className={`flex items-center overflow-hidden ${props.className}`}>
       <img src={props.icon ? props.icon : 'https://www.google.com/favicon.ico'} className={`mx-1 select-none ${imgSizeHandler()}`} />
-      <span className={`select-none whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
+      <span className={`select-none overflow-hidden truncate whitespace-nowrap ${titleSizeHandler()}`}>{props.title}</span>
     </a>
   );
 };

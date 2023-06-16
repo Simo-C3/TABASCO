@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { MdFullscreen } from 'react-icons/md';
 
 // twind
 import { twind, cssom, observe } from '@twind/core';
@@ -10,11 +11,13 @@ import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
 import { Bookmark } from './helper/storage';
 import type { Bookmarks } from './types';
+import { IconContext } from 'react-icons/lib';
 
 const Sidebar = () => {
   const [sidebarStatus, setSidebarStatus] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmarks>();
   const [count, setCount] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
     const sideBarElement = document.getElementById('tabasco-side-bar');
@@ -46,21 +49,35 @@ const Sidebar = () => {
     };
   }, []);
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
     <>
-      <div>
-        <div
-          id='tabasco-side-bar-content'
-          className={` absolute right-[0px] top-[0x] z-50 h-full w-[350px] bg-white py-[40px] pl-[35px] pr-[20px]  text-gray-700 ${
-            sidebarStatus ? '-translate-x-0' : 'translate-x-[350px] '
-          }`}
-          style={{ transition: 'transform 0.5s ease-in-out 0s' }}
-        >
-          <div className='mb-[25px] flex justify-center'>
-            <h1 className='  text-[26px] font-bold'>TABASCO!!!</h1>
-          </div>
-          {bookmarks && <AccordionMenu contents={bookmarks} />}
+      <div
+        id='tabasco-side-bar-content'
+        className={` absolute right-[0px] top-[0x] z-50  h-full w-[350px] overflow-y-auto bg-white py-[40px]  pl-[35px] pr-[20px] text-gray-700 ${
+          sidebarStatus ? '-translate-x-0' : ' translate-x-[350px] '
+        }`}
+        style={{ transition: 'transform 0.5s ease-in-out 0s' }}
+      >
+        <div className='absolute right-[15px]  top-[20px]' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <button className=' bg-white '>
+            <IconContext.Provider value={{ size: '20px', color: !isHovered ? '#c0c0c0' : '#696969' }}>
+              <MdFullscreen className='' />
+            </IconContext.Provider>
+          </button>
         </div>
+
+        <div className='mb-[25px] flex justify-center'>
+          <h1 className='  text-[26px] font-bold'>TABASCO!!!</h1>
+        </div>
+        {bookmarks && <AccordionMenu contents={bookmarks} />}
       </div>
     </>
   );
