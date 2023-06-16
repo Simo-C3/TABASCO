@@ -6,13 +6,16 @@ import Folders from './components/Folders';
 import Summary from './components/Summary';
 import { getTextByBody } from './helper/summary';
 import { createRoot } from 'react-dom/client';
-import { BaseBookmark, BookmarkID, Folder, NewBookMark } from './types';
+import { BookmarkID, Folder, NewBookMark } from './types';
+import { BookmarkProvider, useBookmark } from './context/bookmark';
 
 const Popup = () => {
   let bodyText = '';
   let summary = { isEnabled: false, format: 'default', language: 'jp' };
 
-  const [folders, setFolders] = useState<Folder[]>([]);
+  const { bookmark } = useBookmark();
+  const folders = bookmark.folders();
+
   const [currentFolderID, setCurrentFolderID] = useState<BookmarkID>(RootId);
   const [summarizing, setSummarizing] = useState<boolean>(false);
   const [summaryText, setSummaryText] = useState<string>('');
@@ -37,30 +40,11 @@ const Popup = () => {
     bodyText = bodies[0].result;
   };
 
-  const asyncInit = async () => {
-    // ストレージからフォルダ一覧を取得
-    const bookmark = new Bookmark();
-    const folders = await bookmark.getFolders();
-    setFolders(folders);
-
-    const unsubscribe = bookmark.onChanged<BaseBookmark[]>('array', () => {
-      bookmark.getFolders().then((folders) => {
-        setFolders(folders);
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  };
-
   useEffect(() => {
     getTabInfo();
-    asyncInit();
   }, []);
 
   const addBookmark = async () => {
-    const bookmark = new Bookmark();
     const title = titleInput.current!.value;
     const data: NewBookMark = { title, url, parentId: currentFolderID, icon };
     if (summary.isEnabled) {
@@ -72,7 +56,6 @@ const Popup = () => {
   };
 
   const clearBookmark = async () => {
-    const bookmark = new Bookmark();
     await bookmark.clear();
     window.close();
   };
@@ -155,4 +138,8 @@ const Popup = () => {
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
-root.render(<Popup />);
+root.render(
+  <BookmarkProvider>
+    <Popup />
+  </BookmarkProvider>,
+);
