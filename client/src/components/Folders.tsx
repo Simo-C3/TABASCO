@@ -58,6 +58,12 @@ const Folders = ({ folders, onSelected }: FoldersPropsType) => {
 
   const searchFolder = (e: Event) => {
     const keyword = (e.target as HTMLInputElement).value;
+    if (keyword === '') {
+      newFolder.current?.classList.add('hidden');
+    } else {
+      newFolder.current?.classList.remove('hidden');
+      newFolder.current!.textContent = `新しいフォルダーを作成: ${keyword}`;
+    }
     const children = folderElement.current?.children!;
     for (const child of children) {
       const title = child.textContent;
@@ -72,6 +78,8 @@ const Folders = ({ folders, onSelected }: FoldersPropsType) => {
   const createFolder = async () => {
     const bookmark = new Bookmark();
     const title = input.current?.value!;
+    if (title === '') return;
+
     const icon = '';
     const id = await bookmark.create({
       title: title,
@@ -125,7 +133,9 @@ const Folders = ({ folders, onSelected }: FoldersPropsType) => {
       <div id='folder-selector' ref={folderContainer} className='overflow-hidden transition-all'>
         <input ref={input} className='mb-2 w-full rounded-lg bg-gray-200 px-3 py-1' />
         <div ref={folderElement} />
-        <div ref={newFolder}>新しいフォルダーを作成</div>
+        <div ref={newFolder} className='hidden border-black'>
+          新しいフォルダーを作成
+        </div>
       </div>
     </div>
   );

@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
+// twind
+import { twind, cssom, observe } from '@twind/core';
+import 'construct-style-sheets-polyfill';
+import config from './twind.config';
 
 import './index.css';
 import { AccordionMenu } from './components/accordionMenu';
 import { Bookmark } from './helper/storage';
-import { BaseBookmark } from './types';
+import type { Bookmarks } from './types';
 
 const Sidebar = () => {
   const [sidebarStatus, setSidebarStatus] = useState(false);
-  const [bookmarks, setBookmarks] = useState<BaseBookmark[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmarks>();
   const [count, setCount] = useState(0);
-  const directories = ['hogehoge', 'fugafuga', 'tamtam'];
-  const testDirectories = ['kurichi', 'shimo', 'iori'];
 
   window.addEventListener('mousemove', (e: MouseEvent) => {
     const sideBarElement = document.getElementById('tabasco-side-bar');
+    const sideBarContentElement = sideBarElement?.shadowRoot;
+
     if (!sidebarStatus && window.innerWidth - e.clientX < 10) {
       setSidebarStatus(true);
       sideBarElement?.classList.remove('inactive');
       sideBarElement?.classList.add('active');
-    } else if (sidebarStatus && window.innerWidth - e.clientX > document.getElementById('tabasco-side-bar-content')?.clientWidth!) {
+    } else if (
+      sidebarStatus &&
+      window.innerWidth - e.clientX > sideBarContentElement?.getElementById('tabasco-side-bar-content')?.clientWidth!
+    ) {
       setSidebarStatus(false);
       sideBarElement?.classList.remove('active');
       sideBarElement?.classList.add('inactive');
@@ -27,22 +35,14 @@ const Sidebar = () => {
   });
 
   useEffect(() => {
-    const onChangedStorage = async (changes: { [key: string]: any }, namespace: 'sync' | 'local' | 'managed' | 'session') => {
-      if (namespace !== 'sync') return;
-      const bookmark = new Bookmark();
-      const bookmarks = await bookmark.all();
-      setBookmarks(bookmarks);
-    };
-    chrome.storage.onChanged.addListener(onChangedStorage);
-
-    (async () => {
-      const bookmark = new Bookmark();
-      const bookmarks = await bookmark.all();
-      setBookmarks(bookmarks);
-    })();
+    const bookmark = new Bookmark();
+    (async () => setBookmarks(await bookmark.getBookmarkTree()))();
+    const unsubscribe = bookmark.onChanged<Bookmarks>('tree', (newBookmarks) => {
+      setBookmarks(newBookmarks);
+    });
 
     return () => {
-      chrome.storage.onChanged.removeListener(onChangedStorage);
+      unsubscribe();
     };
   }, []);
 
@@ -53,32 +53,25 @@ const Sidebar = () => {
         className={`absolute right-0 top-0 z-50 h-full w-[350px] bg-white px-10 py-20 text-gray-700 ${
           sidebarStatus ? '-translate-x-0' : 'translate-x-[350px]'
         }`}
+        style={{ transition: 'transform 0.5s ease-in-out 0s' }}
       >
         <span>Hello World</span>
-        <div>{count}</div>
-        {bookmarks.map((bookmark) => {
-          return (
-            <div>
-              {bookmark.title}
-              {bookmark.url}
-            </div>
-          );
-        })}
-        <AccordionMenu name='shimomo' contents={testDirectories} />
-        <div>
-          <select>
-            {directories.map((directory) => (
-              <option value={directory}>{directory}</option>
-            ))}
-          </select>
-        </div>
+        {bookmarks && <AccordionMenu contents={bookmarks} />}
       </div>
     </>
   );
 };
 
+const sheet = cssom(new CSSStyleSheet());
+const tw = twind(config, sheet);
+
 const root: HTMLDivElement = document.createElement('div');
 root.id = 'tabasco-side-bar';
 root.classList.add('inactive');
+const shadowRoot = root.attachShadow({ mode: 'open' });
+root.style.lineHeight = '18px';
+shadowRoot.adoptedStyleSheets = [sheet.target];
+observe(tw, shadowRoot);
+const shadow = createRoot(shadowRoot);
 document.body.appendChild(root);
-ReactDOM.render(<Sidebar />, root);
+shadow.render(<Sidebar />);

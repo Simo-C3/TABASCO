@@ -26,6 +26,12 @@ const apiShareRequest = async (id: string): Promise<Share> => {
 const Options = () => {
   const sidebar = useRef<HTMLDivElement>(null);
 
+  const sidebar = useRef<HTMLDivElement>(null);
+
+  const rerendering = (status: boolean) => {
+    ReactDOM.render(<Column rerendering={rerendering} />, column.current!);
+  };
+
   useEffect(() => {
     getShare();
   }, []);
