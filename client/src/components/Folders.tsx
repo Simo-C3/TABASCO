@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { Folder } from '../types';
 import { MdExpandMore } from 'react-icons/md';
 import BaseFolder from './BaseFolder';
-import { Bookmark } from '../helper/storage';
+import { useBookmark } from '../context/bookmark';
 
 type FoldersPropsType = {
   folders: Folder[];
@@ -10,13 +10,12 @@ type FoldersPropsType = {
 };
 
 const Folders = React.memo(({ folders, onSelected }: FoldersPropsType) => {
+  const { bookmark } = useBookmark();
   const [newFolderTitle, setNewFolderTitle] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentFolder, setCurrentFolder] = useState<Folder | null>(null);
 
   const createNewFolder = async () => {
-    const bookmark = new Bookmark();
-
     const icon = '';
     const id = await bookmark.create({
       title: newFolderTitle,
