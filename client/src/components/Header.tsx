@@ -6,6 +6,7 @@ type Props = {
   searchBookmark: (keyword: string) => void;
   searchResult: BaseBookmark[];
   searchBookmarkUpdate: (folderId: number) => void;
+  getShare?: () => void;
 };
 
 const Header = (props: Props) => {
@@ -18,6 +19,9 @@ const Header = (props: Props) => {
         searchResult={props.searchResult}
         className='z-[101]'
       />
+      <div className='absolute right-5 top-1/2 -translate-y-1/2 cursor-pointer rounded-lg bg-blue-200 px-3 py-1' onClick={props.getShare}>
+        <span>共有を取り込む</span>
+      </div>
     </header>
   );
 };

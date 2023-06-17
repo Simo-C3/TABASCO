@@ -7,6 +7,7 @@ import Column from './components/column';
 import { BaseBookmark } from './types';
 import Header from './components/Header';
 import { BookmarkProvider } from './context/bookmark';
+import ShareImport from './components/ShareImport';
 
 const getQueryParam = (url: string, param: string): string | null => {
   const params = new URLSearchParams(new URL(url).search);
@@ -30,6 +31,7 @@ const Options = () => {
   const [bookmarks, setBookmarks] = useState<BaseBookmark[]>([]);
   const [searchResult, setSearchResult] = useState<BaseBookmark[]>([]);
   const [fullPathWithId, setFullPathWithId] = useState<number[]>([]);
+  const [isOpenShareModal, setIsOpenShareModal] = useState<boolean>(false);
 
   useEffect(() => {
     const f = async () => {
@@ -38,7 +40,6 @@ const Options = () => {
       setBookmarks(bookmarks);
     };
     f();
-    getShare();
   }, []);
 
   const updateBookmarks = async () => {
@@ -63,32 +64,27 @@ const Options = () => {
     });
   };
 
-  const getShare = () => {
-    const url = window.location.href;
-    const id = getQueryParam(url, 'id');
-    if (id) {
-      apiShareRequest(id).then(async (result) => {
-        const bookmark = new Bookmark();
-        const groupId = await bookmark.create({
-          title: result.title,
-        });
-        for (const page of result.pages) {
-          await bookmark.create({
-            title: page.title,
-            url: page.url,
-            parentId: groupId,
-          });
-        }
-      });
-    }
+  const openShareModal = () => {
+    setIsOpenShareModal(true);
   };
 
   return (
-    <div className='h-screen w-screen'>
-      <Header searchBookmark={searchBookmark} searchResult={searchResult} searchBookmarkUpdate={searchBookmarkUpdate} />
+    <div className='relative h-screen w-screen'>
+      <Header
+        searchBookmark={searchBookmark}
+        searchResult={searchResult}
+        searchBookmarkUpdate={searchBookmarkUpdate}
+        getShare={openShareModal}
+      />
       <div id='option-content' className='h-[calc(100vh-4rem)] w-[calc(100vw-4rem)] overflow-x-auto overflow-y-hidden bg-white'>
         <Column updateBookmarks={updateBookmarks} fullPathWithId={fullPathWithId} />
       </div>
+      <ShareImport
+        isOpen={isOpenShareModal}
+        onClose={() => {
+          setIsOpenShareModal(false);
+        }}
+      />
     </div>
   );
 };
