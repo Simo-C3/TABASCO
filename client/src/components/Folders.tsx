@@ -25,8 +25,10 @@ const Folders = React.memo(({ folders, onSelected }: FoldersPropsType) => {
     const folderNames = newFolderTitle.split('/');
     let parentId = RootId;
     for (const folderName of folderNames) {
+      if (folderName === '') continue;
       const folder = bookmarks.find((bookmark) => bookmark.title === folderName && bookmark.parentId === parentId);
       if (!folder) {
+        const bookmark = new Bookmark();
         const id = await bookmark.create({
           title: folderName,
           parentId,
@@ -84,7 +86,7 @@ const Folders = React.memo(({ folders, onSelected }: FoldersPropsType) => {
             ),
         )}
         {newFolderTitle !== '' && (
-          <div className='border-black' onClick={() => createNewFolder()}>
+          <div className='cursor-pointer rounded-md px-2 py-1 hover:bg-gray-100' onClick={() => createNewFolder()}>
             新しいフォルダーを作成: {newFolderTitle}
           </div>
         )}
