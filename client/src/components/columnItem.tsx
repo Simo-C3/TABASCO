@@ -31,7 +31,7 @@ const ColumnItem = memo((props: Props) => {
 
   useEffect(() => {
     leftFrame.current?.addEventListener('keypress', onWindowClickEventHandler);
-  }, []);
+  }, [props.parentId]);
 
   useEffect(() => {
     const folders = props.folderItems.filter((item) => item.type === 'folder');
@@ -96,6 +96,7 @@ const ColumnItem = memo((props: Props) => {
 
   const AddNewFolder = async () => {
     const bookmark: Bookmark = new Bookmark();
+
     await bookmark.create({ title: newFolderTitleInput.current?.value!, parentId: props.parentId });
     newFolderTitleInput.current!.value = '';
     setNewFolderTitle('');
