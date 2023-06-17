@@ -56,7 +56,9 @@ const ColumnFolder = memo((props: Props) => {
     }).then(async (res) => {
       const json = await res.json();
       const id = json.id;
-      navigator.clipboard.writeText(id);
+      console.log(id);
+
+      await navigator.clipboard.writeText(id);
       alert('The ID for sharing has been copied to the clipboard.');
     });
   };
