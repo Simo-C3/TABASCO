@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import type { Bookmarks } from '../types';
 import { RootId } from '../config';
 import { Page } from './page';
-import { MdMoreVert, MdOutlineStickyNote2 } from 'react-icons/md';
+import { MdMoreVert, MdOutlineStickyNote2, MdDeleteForever, MdIosShare } from 'react-icons/md';
 import BaseFolder from './BaseFolder';
 import { useBookmark } from '../context/bookmark';
+import { IconContext } from 'react-icons';
 
 type PropsType = {
   contents: Bookmarks;
@@ -58,8 +59,21 @@ export const AccordionMenu = React.memo(({ contents }: PropsType) => {
             <MdMoreVert onClick={pullDownClick} className='h-5 w-5' />
           </div>
           {menuStatus ? (
-            <div ref={contextMenu} className='absolute right-0 top-8 z-50 rounded-lg bg-white px-3 py-2 drop-shadow-md'>
-              <div onClick={folderDelete} className='text-sm'>
+            <div ref={contextMenu} className='absolute right-0 top-8 z-50 rounded-lg bg-white px-1 py-1 drop-shadow-md'>
+              <div onClick={alert} className='mb-1 mt-1 flex w-full justify-between px-3 py-1 text-sm hover:bg-gray-100'>
+                <span className='pr-[5px]'>
+                  <IconContext.Provider value={{ size: '20px' }}>
+                    <MdIosShare />
+                  </IconContext.Provider>
+                </span>
+                <span>共有する</span>
+              </div>
+              <div onClick={folderDelete} className='mt-1 flex w-full justify-between px-3 py-1 text-sm hover:bg-gray-100'>
+                <span className='pr-[5px]'>
+                  <IconContext.Provider value={{ size: '20px' }}>
+                    <MdDeleteForever />
+                  </IconContext.Provider>
+                </span>
                 <span>削除する</span>
               </div>
             </div>

@@ -66,7 +66,7 @@ const Sidebar = () => {
         </div>
 
         <div className='mb-[25px] flex justify-center'>
-          <h1 className='  text-[26px] font-bold'>TABASCO!!!</h1>
+          <h1 className='  text-[26px] font-bold'>BOOKMARK ADVANCE</h1>
         </div>
         <AccordionMenu contents={bookmark.tree()} />
       </div>
