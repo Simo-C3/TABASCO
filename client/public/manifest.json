@@ -22,6 +22,13 @@
         "mac": "MacCtrl+Shift+D"
       },
       "description": "Run extension."
+    },
+    "bookmark-all-tabs": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+W",
+        "mac": "MacCtrl+Shift+W"
+      },
+      "description": "Run extension."
     }
   },
 
@@ -37,7 +44,7 @@
     "service_worker": "js/background.js"
   },
 
-  "permissions": ["storage", "tabs", "activeTab", "scripting"],
+  "permissions": ["storage", "tabs", "activeTab", "scripting", "commands"],
 
   "host_permissions": ["<all_urls>"]
 }
