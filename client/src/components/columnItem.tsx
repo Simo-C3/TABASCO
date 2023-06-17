@@ -1,11 +1,10 @@
 import React, { MouseEventHandler, memo, useEffect, useRef, useState } from 'react';
 import { MdChevronRight, MdFolderOpen } from 'react-icons/md';
 
-import BaseFolder from './BaseFolder';
-import BaseLink from './BaseLink';
 import { Bookmarks } from '../types';
 import { Bookmark } from '../helper/storage';
 import ColumnFolder from './ColumnFolder';
+import ColumnLink from './ColumnLink';
 
 type Props = {
   index: number;
@@ -28,6 +27,7 @@ const ColumnItem = memo((props: Props) => {
   const [pages, setPages] = useState<Bookmarks[]>([]);
   const [showNewFolderTitleContainer, setShowNewFolderTitleContainer] = useState<boolean>(false);
   const [newFolderTitle, setNewFolderTitle] = useState<string>('');
+  const [showContextMenuBlur, setShowContextMenuBlur] = useState<boolean>(false);
 
   useEffect(() => {
     leftFrame.current?.addEventListener('keypress', onWindowClickEventHandler);
@@ -145,19 +145,22 @@ const ColumnItem = memo((props: Props) => {
                 item={item}
                 columnIndex={props.index}
                 openFolder={props.openFolder}
+                setShowContextMenuBlur={setShowContextMenuBlur}
+                showContextMenuBlur={showContextMenuBlur}
               />
             );
           })}
           {/* ページの表示 */}
           {pages.map((item: Bookmarks, index: number) => {
             return (
-              <BaseLink
+              <ColumnLink
                 key={index}
-                title={item.title}
-                link={item.url}
-                icon={item.icon}
-                size='lg'
-                className='my-1 rounded-md px-1 py-1 pl-6 pr-1 hover:bg-green-100'
+                showContextMenuBlur={showContextMenuBlur}
+                index={index}
+                parentItemsNumber={folders.length}
+                item={item}
+                columnIndex={props.index}
+                setShowContextMenuBlur={setShowContextMenuBlur}
               />
             );
           })}
@@ -179,6 +182,12 @@ const ColumnItem = memo((props: Props) => {
             </div>
           </div>
         ) : null}
+        <div
+          onClick={() => {
+            setShowContextMenuBlur(false);
+          }}
+          className={`fixed left-0 top-0 z-[51] h-screen w-screen ${showContextMenuBlur ? '' : 'hidden'}`}
+        />
       </div>
     </>
   );
