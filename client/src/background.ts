@@ -1,6 +1,6 @@
 import { Bookmark } from './helper/storage';
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.message === 'openOptionsPage') {
     chrome.runtime.openOptionsPage();
   }
@@ -15,6 +15,7 @@ chrome.commands.onCommand.addListener((command) => {
         await bookmark.create({
           title: tab.title || '',
           url: tab.url,
+          icon: tab.favIconUrl,
           parentId: id,
         });
       }
