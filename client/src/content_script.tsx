@@ -47,7 +47,7 @@ const Sidebar = () => {
     <>
       <div
         id='tabasco-side-bar-content'
-        className={` absolute right-[0px] top-[0x] z-50  h-full w-[350px] overflow-y-auto bg-white py-[40px]  pl-[35px] pr-[20px] text-gray-700 ${
+        className={` absolute right-[0px] top-[0x] z-50  h-full w-[350px] overflow-y-auto bg-white py-[40px]  pl-[20px] pr-[15px] text-gray-700 ${
           sidebarStatus ? '-translate-x-0' : ' translate-x-[350px] '
         }`}
         style={{ transition: 'transform 0.5s ease-in-out 0s' }}
