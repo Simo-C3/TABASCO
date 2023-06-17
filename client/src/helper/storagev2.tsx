@@ -29,8 +29,6 @@ export class Bookmark {
   }
 
   async create(bookmark: NewBookMark): Promise<BookmarkID> {
-    if (bookmark.parentId && !this.find(bookmark.parentId)) throw new Error(`ParentId ${bookmark.parentId} not found`);
-
     const parentId = bookmark.parentId ?? RootId;
     const data: BaseBookmark = {
       ...bookmark,
