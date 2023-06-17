@@ -38,7 +38,29 @@ const ColumnFolder = memo((props: Props) => {
     setShowContextMenu(false);
   };
 
-  const shareFolder = () => {};
+  const shareFolder = () => {
+    fetch('https://tabasco-server.kurichi.workers.dev/api/v1/share', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: props.item.title,
+        pages: props.item.children
+          ?.filter((o) => o.type === 'page')
+          .map((child) => ({
+            title: child.title,
+            url: child.url,
+          })),
+      }),
+    }).then(async (res) => {
+      const json = await res.json();
+      const id = json.id;
+      navigator.clipboard.writeText(id);
+      alert('The ID for sharing has been copied to the clipboard.');
+    });
+  };
+
   return (
     <div
       className={`relative my-1 cursor-pointer rounded-md hover:bg-red-100 ${props.item.id === props.openFolderId ? 'bg-red-100' : ''}`}

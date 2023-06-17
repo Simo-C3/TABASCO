@@ -44,7 +44,7 @@
     "service_worker": "js/background.js"
   },
 
-  "permissions": ["storage", "tabs", "activeTab", "scripting", "commands"],
+  "permissions": ["storage", "tabs", "activeTab", "scripting", "commands", "clipboardWrite"],
 
   "host_permissions": ["<all_urls>"]
 }
