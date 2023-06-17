@@ -95,7 +95,7 @@ const Popup = () => {
             setCurrentFolderID(id);
           }}
         />
-        <Summary
+        {/* <Summary
           onChange={(v) => {
             summary = v;
           }}
@@ -109,7 +109,7 @@ const Popup = () => {
             <option value='1d'>1日後</option>
             <option value='2d'>2日後</option>
           </select>
-        </div>
+        </div> */}
         <div className='mt-5 flex items-center justify-around text-base'>
           <button
             className='pointer-events-auto block cursor-pointer rounded-lg bg-blue-600 px-7 py-1 text-white'
